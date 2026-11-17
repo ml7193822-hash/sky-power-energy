@@ -866,9 +866,11 @@ async function loadWallet() {
     .single();
 
   if (error) {
-    messageElement.textContent = "Could not load wallet.";
-    console.error(error);
-    return;
+  messageElement.textContent =
+    "Wallet error: " + error.message;
+
+  console.error("Wallet error:", error);
+  return;
   }
 
   const balance = Number(data.balance || 0);
