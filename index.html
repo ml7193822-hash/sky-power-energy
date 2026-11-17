@@ -3,287 +3,318 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sky Power Energy Uganda</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sky Power Energy | Investor Dashboard</title>
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f7f4;color:#183528}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.sidebar{position:fixed;top:0;bottom:0;left:0;width:245px;background:#073d27;color:white;padding:23px 15px;overflow:auto}
+.logo{font-size:21px;font-weight:bold;margin-bottom:5px}
+.tag{font-size:10px;color:#b8ddc7;margin-bottom:30px}
+.menu{width:100%;padding:14px;text-align:left;background:transparent;color:#d8eadf;border:0;border-radius:8px;margin:3px 0}
+.menu:hover,.menu.active{background:#176640;color:white}
+.main{margin-left:245px;padding:25px;max-width:1500px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
+.top h2{margin:0}
+.user{background:white;border-radius:30px;padding:10px 15px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 8px #00000008}
+.muted{color:#718579;font-size:13px}
+.amount{font-size:23px;font-weight:bold;margin-top:12px}
+.green{color:#087c43}
+.panel{background:white;border-radius:12px;padding:22px;margin-top:20px;box-shadow:0 2px 8px #00000008}
+.page{display:none}
+.page.active{display:block}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.product{background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e4eee7}
+.turbine{font-size:65px;background:#e8f5eb;padding:20px;border-radius:10px}
+.price{font-size:21px;color:#078044;font-weight:bold}
+.btn{background:#087b43;color:white;border:0;border-radius:7px;padding:12px 17px}
+.btn2{background:#e5f3e9;color:#086537;border:0;border-radius:7px;padding:12px 17px}
+input,select{width:100%;padding:13px;border:1px solid #d9e4dc;border-radius:7px;margin:8px 0 15px;background:white}
+label{font-size:13px;font-weight:bold}
+.form{max-width:500px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:13px;text-align:left;border-bottom:1px solid #e8eee9;font-size:13px}
+th{color:#6b7d70}
+.badge{background:#fff3d6;color:#936400;padding:5px 9px;border-radius:15px;font-size:11px}
+.mobile{display:none}
+@media(max-width:850px){
+.sidebar{width:100%;height:auto;bottom:auto;position:relative;padding:12px}
+.logo{font-size:18px;margin-bottom:5px}
+.tag{margin-bottom:8px}
+nav{display:flex;overflow-x:auto}
+.menu{white-space:nowrap;width:auto;padding:10px;font-size:12px}
+.main{margin:0;padding:14px}
+.cards{grid-template-columns:repeat(2,1fr)}
+.products{grid-template-columns:repeat(2,1fr)}
+.top h2{font-size:20px}
 }
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f7f2;
-  color: #163321;
-}
-
-header {
-  background: #064d27;
-  color: white;
-  padding: 25px 15px;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 30px;
-  margin: 5px;
-}
-
-header p {
-  margin: 8px;
-}
-
-nav {
-  background: #08783a;
-  padding: 14px;
-  text-align: center;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  margin: 10px;
-  font-weight: bold;
-}
-
-.hero {
-  text-align: center;
-  padding: 55px 15px;
-  background: linear-gradient(120deg,#064d27,#18a34a);
-  color: white;
-}
-
-.hero h2 {
-  font-size: 32px;
-}
-
-.hero button, .package button {
-  background: #ffcf00;
-  border: none;
-  padding: 13px 22px;
-  border-radius: 7px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-section {
-  padding: 30px 15px;
-  text-align: center;
-}
-
-.packages {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
-  gap: 18px;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.package {
-  background: white;
-  padding: 22px;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px #0001;
-}
-
-.package h3 {
-  color: #08783a;
-}
-
-.price {
-  color: #08783a;
-  font-size: 23px;
-  font-weight: bold;
-}
-
-.turbine {
-  font-size: 55px;
-}
-
-form {
-  background: white;
-  max-width: 450px;
-  margin: auto;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px #0001;
-}
-
-input, select {
-  width: 100%;
-  padding: 13px;
-  margin: 9px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-form button {
-  background: #08783a;
-  color: white;
-  border: none;
-  padding: 14px;
-  width: 100%;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-footer {
-  background: #064d27;
-  color: white;
-  text-align: center;
-  padding: 25px;
+@media(max-width:480px){
+.products{grid-template-columns:1fr}
+.card{padding:14px}
+.amount{font-size:19px}
+.panel{padding:14px;overflow-x:auto}
 }
 </style>
 </head>
-
 <body>
 
-<header>
-  <h1>SKY POWER ENERGY</h1>
-  <p>Powering Today, Energizing Tomorrow.</p>
-  <p>Uganda 🇺🇬</p>
-</header>
+<aside class="sidebar">
+ <div class="logo">🌬️ SKY POWER ENERGY</div>
+ <div class="tag">POWERING TOMORROW</div>
+ <nav>
+  <button class="menu active" onclick="showPage('dashboard',this)">⌂ Overview</button>
+  <button class="menu" onclick="showPage('deposit',this)">＋ Deposit</button>
+  <button class="menu" onclick="showPage('withdraw',this)">↗ Withdraw</button>
+  <button class="menu" onclick="showPage('products',this)">⚡ Products</button>
+  <button class="menu" onclick="showPage('investments',this)">▤ Investments</button>
+  <button class="menu" onclick="showPage('transactions',this)">◷ Transactions</button>
+  <button class="menu" onclick="showPage('profile',this)">♙ My Profile</button>
+  <button class="menu" onclick="logout()">⇥ Log Out</button>
+ </nav>
+</aside>
 
-<nav>
-  <a href="#home">Home</a>
-  <a href="#about">About</a>
-  <a href="#packages">Packages</a>
-  <a href="#register">Register</a>
-  <a href="#contact">Contact</a>
-</nav>
+<main class="main">
+ <div class="top">
+  <h2 id="heading">Dashboard Overview</h2>
+  <div class="user">👤 Investor</div>
+ </div>
 
-<div class="hero" id="home">
+ <section id="dashboard" class="page active">
   <h2>Welcome to Sky Power Energy</h2>
-  <p>Renewable Energy and Wind Turbine Manufacturing.</p>
-  <p>Building a cleaner and greener future for Uganda.</p>
-  <button onclick="document.getElementById('packages').scrollIntoView()">
-    View Packages
-  </button>
-</div>
+  <p class="muted">Your renewable energy investor dashboard.</p>
+  <div class="cards">
+   <div class="card"><div class="muted">Available balance</div><div class="amount" id="balance">UGX 0</div></div>
+   <div class="card"><div class="muted">Total deposits</div><div class="amount" id="deposits">UGX 0</div></div>
+   <div class="card"><div class="muted">Total invested</div><div class="amount" id="invested">UGX 0</div></div>
+   <div class="card"><div class="muted">Withdrawals</div><div class="amount" id="withdrawals">UGX 0</div></div>
+  </div>
+  <div class="panel">
+   <h3>Quick actions</h3>
+   <button class="btn" onclick="showPage('deposit')">Make a deposit</button>
+   <button class="btn2" onclick="showPage('products')">Explore products</button>
+   <button class="btn2" onclick="showPage('withdraw')">Request withdrawal</button>
+  </div>
+  <div class="panel">
+   <h3>Recent activity</h3>
+   <p class="muted" id="activity">No transactions yet.</p>
+  </div>
+ </section>
 
-<section id="about">
-  <h2>About Our Company</h2>
-  <p>
-    Sky Power Energy is a proposed renewable energy
-    and wind turbine manufacturing business in Uganda.
-    Our vision is to support clean energy and innovation.
-  </p>
-</section>
-
-<section id="packages">
-  <h2>SKY WIND ENERGY PACKAGES</h2>
-  <p>All prices are in Ugandan Shillings (UGX).</p>
-
-  <div class="packages" id="packageList"></div>
-</section>
-
-<section id="register">
-  <h2>Investor Registration</h2>
-
-  <form id="registration">
-    <input type="text" placeholder="Full Name" required>
-    <input type="tel" placeholder="Phone Number" required>
-    <input type="email" placeholder="Email Address" required>
-
-    <select id="investment" required>
-      <option value="">Choose a package</option>
-      <option value="5000">SKY WIND ENERGY 1</option>
-      <option value="15000">SKY WIND ENERGY 2</option>
-      <option value="30000">SKY WIND ENERGY 3</option>
-      <option value="50000">SKY WIND ENERGY 4</option>
-      <option value="100000">SKY WIND ENERGY 5</option>
-      <option value="300000">SKY WIND ENERGY 6</option>
-      <option value="500000">SKY WIND ENERGY 7</option>
-      <option value="1000000">SKY WIND ENERGY 8</option>
-      <option value="2000000">SKY WIND ENERGY 9</option>
-      <option value="custom">Custom amount</option>
+ <section id="deposit" class="page">
+  <h2>Deposit Funds</h2>
+  <p class="muted">Choose your mobile money provider.</p>
+  <div class="panel form">
+   <form onsubmit="depositDemo(event)">
+    <label>Amount (UGX)</label>
+    <input id="depositAmount" type="number" min="1" required placeholder="Enter amount">
+    <label>Payment method</label>
+    <select id="provider">
+     <option>MTN Mobile Money</option>
+     <option>Airtel Money</option>
     </select>
+    <label>Mobile money number</label>
+    <input type="tel" required placeholder="Your registered phone number">
+    <button class="btn">Submit deposit request</button>
+   </form>
+   <p class="muted">Demo only: no payment is collected or processed. A verified payment gateway and server are required.</p>
+  </div>
+ </section>
 
-    <input type="number" id="customAmount"
-      placeholder="Custom amount in UGX" min="1"
-      style="display:none">
+ <section id="withdraw" class="page">
+  <h2>Withdraw Funds</h2>
+  <div class="panel form">
+   <form onsubmit="withdrawDemo(event)">
+    <label>Withdrawal amount (UGX)</label>
+    <input id="withdrawAmount" type="number" min="1" required placeholder="Enter amount">
+    <label>Mobile money provider</label>
+    <select id="withdrawProvider">
+     <option>MTN Mobile Money</option>
+     <option>Airtel Money</option>
+    </select>
+    <label>Phone number</label>
+    <input type="tel" required placeholder="Mobile money number">
+    <button class="btn">Submit withdrawal request</button>
+   </form>
+   <p class="muted">Requests require server-side balance checks and administrator approval.</p>
+  </div>
+ </section>
 
-    <button type="submit">Submit Registration</button>
-  </form>
+ <section id="products" class="page">
+  <h2>Our Wind Turbine Products</h2>
+  <p class="muted">Sky Wind Energy product catalogue.</p>
+  <div class="products" id="productList"></div>
+ </section>
 
-  <p id="message"></p>
-</section>
+ <section id="investments" class="page">
+  <h2>My Investments</h2>
+  <div class="panel">
+   <table>
+    <thead><tr><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody id="investmentRows"><tr><td colspan="3">No investments yet.</td></tr></tbody>
+   </table>
+  </div>
+ </section>
 
-<section id="contact">
-  <h2>Contact Sky Power Energy</h2>
-  <p>Uganda</p>
-  <p>Email: Add your company email</p>
-  <p>Phone: Add your company phone number</p>
-</section>
+ <section id="transactions" class="page">
+  <h2>Transaction History</h2>
+  <div class="panel">
+   <table>
+    <thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody id="transactionRows"><tr><td colspan="3">No transactions yet.</td></tr></tbody>
+   </table>
+  </div>
+ </section>
 
-<footer>
-  <h3>SKY POWER ENERGY</h3>
-  <p>Powering Today, Energizing Tomorrow.</p>
-  <p>© 2026 Sky Power Energy. All rights reserved.</p>
-</footer>
+ <section id="profile" class="page">
+  <h2>My Profile</h2>
+  <div class="panel form">
+   <form onsubmit="saveProfile(event)">
+    <label>Full name</label>
+    <input id="fullName" placeholder="Your full name">
+    <label>Email address</label>
+    <input id="email" type="email" placeholder="Your email">
+    <label>Phone number</label>
+    <input id="phone" type="tel" placeholder="Your phone number">
+    <label>Country</label>
+    <input value="Uganda" disabled>
+    <button class="btn">Save profile (demo)</button>
+   </form>
+  </div>
+ </section>
+
+ <footer class="panel">
+  <b>SKY POWER ENERGY</b>
+  <p class="muted">Renewable energy innovation in Uganda.</p>
+  <p class="muted">Investor portal demonstration. Investment terms and returns must be verified before launch.</p>
+ </footer>
+</main>
 
 <script>
-const packages = [
-  {name:"SKY WIND ENERGY 1", price:5000, product:"Sky Turbine 1"},
-  {name:"SKY WIND ENERGY 2", price:15000, product:"Sky Turbine 2"},
-  {name:"SKY WIND ENERGY 3", price:30000, product:"Sky Turbine 3"},
-  {name:"SKY WIND ENERGY 4", price:50000, product:"Sky Turbine 4"},
-  {name:"SKY WIND ENERGY 5", price:100000, product:"Sky Turbine 5"},
-  {name:"SKY WIND ENERGY 6", price:300000, product:"Sky Turbine 6"},
-  {name:"SKY WIND ENERGY 7", price:500000, product:"Sky Turbine 7"},
-  {name:"SKY WIND ENERGY 8", price:1000000, product:"Sky Turbine 8"},
-  {name:"SKY WIND ENERGY 9", price:2000000, product:"Sky Turbine 9"}
+const products=[
+ ["SKY WIND ENERGY 1",5000],
+ ["SKY WIND ENERGY 2",15000],
+ ["SKY WIND ENERGY 3",30000],
+ ["SKY WIND ENERGY 4",50000],
+ ["SKY WIND ENERGY 5",100000],
+ ["SKY WIND ENERGY 6",300000],
+ ["SKY WIND ENERGY 7",500000],
+ ["SKY WIND ENERGY 8",1000000],
+ ["SKY WIND ENERGY 9",2000000]
 ];
 
-const list = document.getElementById("packageList");
+let transactions=[];
+let investments=[];
+let totalDeposits=0;
+let totalWithdrawals=0;
+let totalInvested=0;
+let balance=0;
 
-packages.forEach((item, index) => {
-  list.innerHTML += `
-    <div class="package">
-      <div class="turbine">🌬️</div>
-      <h3>${item.name}</h3>
-      <p class="price">UGX ${item.price.toLocaleString()}</p>
-      <p>Product: ${item.product}</p>
-      <p>Wind energy technology</p>
-      <button onclick="choosePackage(${index})">
-        Select Package
-      </button>
-    </div>
-  `;
-});
-
-function choosePackage(index) {
-  document.getElementById("investment").value =
-    packages[index].price;
-  document.getElementById("register").scrollIntoView();
+function money(n){
+ return "UGX "+Number(n).toLocaleString("en-UG");
 }
 
-document.getElementById("investment").addEventListener("change", function() {
-  document.getElementById("customAmount").style.display =
-    this.value === "custom" ? "block" : "none";
-});
+function showPage(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".menu").forEach(b=>b.classList.remove("active"));
+ if(button) button.classList.add("active");
+ const names={
+ dashboard:"Dashboard Overview",
+ deposit:"Deposit Funds",
+ withdraw:"Withdraw Funds",
+ products:"Our Products",
+ investments:"My Investments",
+ transactions:"Transaction History",
+ profile:"My Profile"
+ };
+ document.getElementById("heading").textContent=names[id];
+}
 
-document.getElementById("registration").addEventListener("submit", function(e) {
-  e.preventDefault();
+function renderProducts(){
+ const list=document.getElementById("productList");
+ products.forEach((p,i)=>{
+  list.innerHTML+=`
+   <div class="product">
+    <div class="turbine">🌬️</div>
+    <h3>${p[0]}</h3>
+    <div class="price">${money(p[1])}</div>
+    <p class="muted">Wind turbine product ${i+1}</p>
+    <button class="btn" onclick="selectProduct(${i})">View product</button>
+   </div>`;
+ });
+}
 
-  const selection = document.getElementById("investment").value;
-  const amount = selection === "custom"
-    ? document.getElementById("customAmount").value
-    : selection;
+function selectProduct(i){
+ const p=products[i];
+ if(confirm("Selected "+p[0]+" for "+money(p[1])+". Submit a demo investment request?")){
+  investments.push({name:p[0],amount:p[1],status:"Pending"});
+  totalInvested+=p[1];
+  render();
+  showPage("investments");
+ }
+}
 
-  if (!amount || Number(amount) <= 0) {
-    alert("Please enter a valid investment amount.");
-    return;
-  }
+function depositDemo(e){
+ e.preventDefault();
+ const amount=Number(document.getElementById("depositAmount").value);
+ if(amount<=0)return;
+ transactions.push({type:"Deposit request",amount,status:"Pending"});
+ render();
+ alert("Demo deposit request recorded as pending. No money has been transferred.");
+ e.target.reset();
+}
 
-  document.getElementById("message").textContent =
-    "Demo registration received. Connect a secure backend to save your application.";
+function withdrawDemo(e){
+ e.preventDefault();
+ const amount=Number(document.getElementById("withdrawAmount").value);
+ if(amount<=0)return;
+ transactions.push({type:"Withdrawal request",amount,status:"Pending"});
+ render();
+ alert("Demo withdrawal request recorded as pending. No money has been transferred.");
+ e.target.reset();
+}
 
-  this.reset();
-  document.getElementById("customAmount").style.display = "none";
-});
+function saveProfile(e){
+ e.preventDefault();
+ alert("Demo profile form submitted. Connect a secure backend to save profile changes.");
+}
+
+function render(){
+ document.getElementById("balance").textContent=money(balance);
+ document.getElementById("deposits").textContent=money(totalDeposits);
+ document.getElementById("withdrawals").textContent=money(totalWithdrawals);
+ document.getElementById("invested").textContent=money(totalInvested);
+
+ document.getElementById("transactionRows").innerHTML=
+ transactions.length?transactions.map(t=>`
+ <tr><td>${t.type}</td><td>${money(t.amount)}</td>
+ <td><span class="badge">${t.status}</span></td></tr>`).join("")
+ :'<tr><td colspan="3">No transactions yet.</td></tr>';
+
+ document.getElementById("investmentRows").innerHTML=
+ investments.length?investments.map(t=>`
+ <tr><td>${t.name}</td><td>${money(t.amount)}</td>
+ <td><span class="badge">${t.status}</span></td></tr>`).join("")
+ :'<tr><td colspan="3">No investments yet.</td></tr>';
+
+ document.getElementById("activity").textContent=
+ transactions.length?transactions[transactions.length-1].type+" — "+money(transactions[transactions.length-1].amount):"No transactions yet.";
+}
+
+function logout(){
+ if(confirm("Are you sure you want to log out?")){
+  alert("This is a dashboard preview. Real account sign-out requires authentication.");
+  showPage("dashboard");
+ }
+}
+
+renderProducts();
+render();
 </script>
-
 </body>
 </html>
+
