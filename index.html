@@ -643,11 +643,22 @@ main {
 
 <!-- OTHER PAGES -->
 
+
 <section class="page" id="My Wallet">
   <div class="welcome">
     <h1>My Wallet</h1>
     <div class="muted">Wallet overview</div>
   </div>
+
+  <div class="balance">
+    <div class="balance-label">Available Balance</div>
+    <div class="amount" id="walletBalance">UGX 0</div>
+    <span class="balance-label" id="walletMessage">
+      Loading wallet...
+    </span>
+  </div>
+</section>
+
 
   <div class="balance">
     <div class="balance-label">Available Balance</div>
@@ -747,6 +758,7 @@ document.querySelector(".layout").style.display = "none";
 function showApp() {
   document.getElementById("authScreen").style.display = "none";
   document.querySelector(".layout").style.display = "flex";
+  loadWallet();
 }
 
 function showAuthMessage(message) {
@@ -832,6 +844,41 @@ async function checkLogin() {
 }
 
 checkLogin();
+  
+async function loadWallet() {
+  const balanceElement = document.getElementById("walletBalance");
+  const messageElement = document.getElementById("walletMessage");
+
+  messageElement.textContent = "Loading wallet...";
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !user) {
+    messageElement.textContent = "Please log in again.";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("wallets")
+    .select("balance")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    messageElement.textContent = "Could not load wallet.";
+    console.error(error);
+    return;
+  }
+
+  const balance = Number(data.balance || 0);
+
+  balanceElement.textContent =
+    "UGX " + balance.toLocaleString("en-UG");
+
+  messageElement.textContent = "Your account balance";
+}
+
 
 
 function toggleMenu() {
