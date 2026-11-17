@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sky Power Energy Uganda</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f7f2;
+  color: #163321;
+}
+
+header {
+  background: #064d27;
+  color: white;
+  padding: 25px 15px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 30px;
+  margin: 5px;
+}
+
+header p {
+  margin: 8px;
+}
+
+nav {
+  background: #08783a;
+  padding: 14px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 10px;
+  font-weight: bold;
+}
+
+.hero {
+  text-align: center;
+  padding: 55px 15px;
+  background: linear-gradient(120deg,#064d27,#18a34a);
+  color: white;
+}
+
+.hero h2 {
+  font-size: 32px;
+}
+
+.hero button, .package button {
+  background: #ffcf00;
+  border: none;
+  padding: 13px 22px;
+  border-radius: 7px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+section {
+  padding: 30px 15px;
+  text-align: center;
+}
+
+.packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  gap: 18px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.package {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #0001;
+}
+
+.package h3 {
+  color: #08783a;
+}
+
+.price {
+  color: #08783a;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.turbine {
+  font-size: 55px;
+}
+
+form {
+  background: white;
+  max-width: 450px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #0001;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin: 9px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+form button {
+  background: #08783a;
+  color: white;
+  border: none;
+  padding: 14px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+footer {
+  background: #064d27;
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>SKY POWER ENERGY</h1>
+  <p>Powering Today, Energizing Tomorrow.</p>
+  <p>Uganda 🇺🇬</p>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#packages">Packages</a>
+  <a href="#register">Register</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<div class="hero" id="home">
+  <h2>Welcome to Sky Power Energy</h2>
+  <p>Renewable Energy and Wind Turbine Manufacturing.</p>
+  <p>Building a cleaner and greener future for Uganda.</p>
+  <button onclick="document.getElementById('packages').scrollIntoView()">
+    View Packages
+  </button>
+</div>
+
+<section id="about">
+  <h2>About Our Company</h2>
+  <p>
+    Sky Power Energy is a proposed renewable energy
+    and wind turbine manufacturing business in Uganda.
+    Our vision is to support clean energy and innovation.
+  </p>
+</section>
+
+<section id="packages">
+  <h2>SKY WIND ENERGY PACKAGES</h2>
+  <p>All prices are in Ugandan Shillings (UGX).</p>
+
+  <div class="packages" id="packageList"></div>
+</section>
+
+<section id="register">
+  <h2>Investor Registration</h2>
+
+  <form id="registration">
+    <input type="text" placeholder="Full Name" required>
+    <input type="tel" placeholder="Phone Number" required>
+    <input type="email" placeholder="Email Address" required>
+
+    <select id="investment" required>
+      <option value="">Choose a package</option>
+      <option value="5000">SKY WIND ENERGY 1</option>
+      <option value="15000">SKY WIND ENERGY 2</option>
+      <option value="30000">SKY WIND ENERGY 3</option>
+      <option value="50000">SKY WIND ENERGY 4</option>
+      <option value="100000">SKY WIND ENERGY 5</option>
+      <option value="300000">SKY WIND ENERGY 6</option>
+      <option value="500000">SKY WIND ENERGY 7</option>
+      <option value="1000000">SKY WIND ENERGY 8</option>
+      <option value="2000000">SKY WIND ENERGY 9</option>
+      <option value="custom">Custom amount</option>
+    </select>
+
+    <input type="number" id="customAmount"
+      placeholder="Custom amount in UGX" min="1"
+      style="display:none">
+
+    <button type="submit">Submit Registration</button>
+  </form>
+
+  <p id="message"></p>
+</section>
+
+<section id="contact">
+  <h2>Contact Sky Power Energy</h2>
+  <p>Uganda</p>
+  <p>Email: Add your company email</p>
+  <p>Phone: Add your company phone number</p>
+</section>
+
+<footer>
+  <h3>SKY POWER ENERGY</h3>
+  <p>Powering Today, Energizing Tomorrow.</p>
+  <p>© 2026 Sky Power Energy. All rights reserved.</p>
+</footer>
+
+<script>
+const packages = [
+  {name:"SKY WIND ENERGY 1", price:5000, product:"Sky Turbine 1"},
+  {name:"SKY WIND ENERGY 2", price:15000, product:"Sky Turbine 2"},
+  {name:"SKY WIND ENERGY 3", price:30000, product:"Sky Turbine 3"},
+  {name:"SKY WIND ENERGY 4", price:50000, product:"Sky Turbine 4"},
+  {name:"SKY WIND ENERGY 5", price:100000, product:"Sky Turbine 5"},
+  {name:"SKY WIND ENERGY 6", price:300000, product:"Sky Turbine 6"},
+  {name:"SKY WIND ENERGY 7", price:500000, product:"Sky Turbine 7"},
+  {name:"SKY WIND ENERGY 8", price:1000000, product:"Sky Turbine 8"},
+  {name:"SKY WIND ENERGY 9", price:2000000, product:"Sky Turbine 9"}
+];
+
+const list = document.getElementById("packageList");
+
+packages.forEach((item, index) => {
+  list.innerHTML += `
+    <div class="package">
+      <div class="turbine">🌬️</div>
+      <h3>${item.name}</h3>
+      <p class="price">UGX ${item.price.toLocaleString()}</p>
+      <p>Product: ${item.product}</p>
+      <p>Wind energy technology</p>
+      <button onclick="choosePackage(${index})">
+        Select Package
+      </button>
+    </div>
+  `;
+});
+
+function choosePackage(index) {
+  document.getElementById("investment").value =
+    packages[index].price;
+  document.getElementById("register").scrollIntoView();
+}
+
+document.getElementById("investment").addEventListener("change", function() {
+  document.getElementById("customAmount").style.display =
+    this.value === "custom" ? "block" : "none";
+});
+
+document.getElementById("registration").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const selection = document.getElementById("investment").value;
+  const amount = selection === "custom"
+    ? document.getElementById("customAmount").value
+    : selection;
+
+  if (!amount || Number(amount) <= 0) {
+    alert("Please enter a valid investment amount.");
+    return;
+  }
+
+  document.getElementById("message").textContent =
+    "Demo registration received. Connect a secure backend to save your application.";
+
+  this.reset();
+  document.getElementById("customAmount").style.display = "none";
+});
+</script>
+
+</body>
+</html>
