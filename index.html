@@ -1,364 +1,675 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sky Power Energy</title>
+<title>Sky Power Energy Dashboard</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f7ff;color:#102044}
-header{height:75px;background:white;display:flex;align-items:center;padding:12px;gap:15px;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:10}
-.menu{font-size:28px;border:0;background:#edf3ff;padding:8px 13px;border-radius:10px;cursor:pointer}
-.brand{font-size:21px;font-weight:bold;color:#0752c5}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:250px;background:white;padding:15px;transition:.25s;flex-shrink:0}
-.sidebar.closed{width:0;padding:0;overflow:hidden}
-.sidebar button{display:block;width:100%;padding:15px;margin:5px 0;border:0;border-radius:10px;background:white;text-align:left;font-size:15px;color:#102044;cursor:pointer}
-.sidebar button.active{background:#1769f5;color:white}
-main{padding:20px;flex:1;min-width:0}
-.page{display:none}
-.page.active{display:block}
-h1{margin-top:5px}
-.picture{height:260px;background:white;border:2px dashed #8bb4ff;border-radius:15px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;margin-bottom:18px}
-.picture img{width:100%;height:100%;object-fit:cover;display:none}
-.picture label{background:#1769f5;color:white;padding:12px 18px;border-radius:8px;display:inline-block;cursor:pointer}
-input[type=file]{display:none}
-.wallet{background:white;padding:22px;border-radius:15px;border:1px solid #d5e2ff;margin-bottom:18px}
-.balance{font-size:30px;font-weight:bold;margin:12px 0}
-button.action{padding:12px 20px;border:0;border-radius:9px;color:white;background:#1769f5;margin:5px;cursor:pointer}
-.green{background:#08a94c!important}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}
-.card{background:white;border:1px solid #dce6fa;padding:17px;border-radius:12px;text-align:center}
-.card strong{display:block;color:#0752c5;font-size:21px;margin-bottom:7px}
-.panel{background:white;border:1px solid #dce6fa;border-radius:12px;padding:18px;margin-top:15px}
-input{padding:12px;width:100%;border:1px solid #ccd8ec;border-radius:8px;margin:8px 0}
-table{width:100%;border-collapse:collapse}
-td,th{padding:12px;border-bottom:1px solid #eee;text-align:left}
-.notice{background:#fff5df;padding:12px;border-left:4px solid orange;margin:15px 0;border-radius:6px}
-@media(max-width:700px){
-.sidebar{position:fixed;top:75px;bottom:0;z-index:9;box-shadow:2px 5px 15px #aaa}
-.sidebar.closed{width:0}
-.cards{grid-template-columns:repeat(2,1fr)}
-main{padding:12px}
-.picture{height:210px}
-}
-  
-/* SKY POWER ENERGY NAVY & GOLD SIDEBAR */
-
-.sidebar {
-    background: #102B63;
-    border-right: 2px solid #D6A83E;
+:root {
+  --bg: #17130b;
+  --panel: #292111;
+  --panel2: #211a0c;
+  --gold: #e5b83d;
+  --gold-dark: #a77b16;
+  --cream: #f4e6bd;
+  --muted: #c8b77f;
+  --line: #80601c;
 }
 
-.sidebar button {
-    color: #FFFFFF;
-    background: transparent;
-    border-radius: 10px;
-    transition: 0.3s;
+* {
+  box-sizing: border-box;
 }
 
-.sidebar button:hover {
-    background: #24477F;
-    color: #D6A83E;
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: Arial, sans-serif;
 }
 
-.sidebar button.active {
-    background: #D6A83E;
-    color: #102B63;
-    font-weight: bold;
+button {
+  font: inherit;
+  cursor: pointer;
 }
 
-.menu {
-    background: #102B63;
-    color: #FFFFFF;
+/* TOP HEADER */
+.topbar {
+  height: 65px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .brand {
-    color: #102B63;
+  color: var(--gold);
+  font-weight: bold;
+  letter-spacing: 1px;
 }
-  
-/* MAIN DASHBOARD DESIGN */
 
+.menu-btn {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 26px;
+  margin-right: 12px;
+}
+
+/* LAYOUT */
+.layout {
+  display: flex;
+  min-height: calc(100vh - 65px);
+}
+
+.sidebar {
+  width: 245px;
+  background: #20190c;
+  border-right: 1px solid var(--line);
+  padding: 18px 12px;
+  flex-shrink: 0;
+}
+
+.nav {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 5px 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--cream);
+  text-align: left;
+}
+
+.nav:hover,
+.nav.active {
+  background: #392b10;
+  border-color: var(--gold-dark);
+  color: var(--gold);
+}
+
+/* MAIN CONTENT */
 main {
-    background: #F5F7FC;
-    color: #102B63;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
 }
 
-h1 {
-    color: #102B63;
+.page {
+  display: none;
 }
 
-.wallet {
-    background: linear-gradient(135deg,#102B63,#24477F);
-    color: white;
-    border: 2px solid #D6A83E;
-    border-radius: 15px;
+.page.active {
+  display: block;
 }
 
-.wallet h3,
-.wallet .balance {
-    color: white;
+.welcome {
+  margin-bottom: 20px;
 }
 
-.card {
-    background: white;
-    border: 1px solid #D6A83E;
-    border-radius: 13px;
-    box-shadow: 0 3px 10px #102B6310;
+.welcome h1 {
+  color: var(--gold);
+  margin: 0 0 7px;
+  font-size: 28px;
 }
 
-.card strong {
-    color: #102B63;
+.muted {
+  color: var(--muted);
+  font-size: 13px;
 }
 
-.picture {
-    background: white;
-    border: 2px dashed #D6A83E;
-    border-radius: 15px;
+/* BALANCE CARD */
+.balance {
+  background: linear-gradient(
+    125deg,
+    #76530f,
+    #a77b16,
+    #64470f
+  );
+  border: 1px solid #d1a632;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 18px;
 }
 
-button.action {
-    background: #102B63;
-    color: white;
+.balance-label {
+  color: #ffedb0;
 }
 
-button.action.green {
-    background: #087C55;
+.amount {
+  font-size: 34px;
+  font-weight: bold;
+  color: white;
+  margin: 10px 0 18px;
 }
 
-.panel {
-    background: white;
-    border: 1px solid #D6A83E;
-    border-radius: 13px;
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gold-btn {
+  background: var(--gold);
+  color: #241a08;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: bold;
+}
+
+.outline-btn {
+  background: #241b0a;
+  color: var(--gold);
+  border: 1px solid var(--gold-dark);
+  border-radius: 8px;
+  padding: 11px 16px;
+}
+
+/* DASHBOARD CARDS */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+  margin: 18px 0;
+}
+
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 17px;
+}
+
+.stat-icon {
+  font-size: 23px;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 10px 0 6px;
+}
+
+.stat-value {
+  font-size: 19px;
+  font-weight: bold;
+  color: #f4d477;
+}
+
+/* SECTIONS */
+.section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 17px 0;
+}
+
+.section h2 {
+  color: var(--gold);
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+
+/* COMPANY IMAGE UPLOAD */
+.upload {
+  border: 1px dashed var(--gold-dark);
+  border-radius: 10px;
+  min-height: 155px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #211a0c;
+  color: var(--muted);
+  text-align: center;
+  padding: 16px;
+}
+
+.upload img {
+  max-width: 100%;
+  max-height: 190px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.upload input {
+  max-width: 230px;
+  color: var(--muted);
+}
+
+/* QUICK LINKS */
+.quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.quick a {
+  display: block;
+  text-decoration: none;
+  background: #211a0c;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 15px;
+  color: var(--cream);
+}
+
+.quick a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .notice {
-    background: #FFF8E7;
-    border-left: 4px solid #D6A83E;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 15px;
 }
 
+/* MOBILE RESPONSIVE */
+@media(max-width: 850px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
+  .quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 620px) {
+  .layout {
+    display: block;
+  }
+
+  .sidebar {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    top: 65px;
+    bottom: 0;
+    left: 0;
+    width: 260px;
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    display: block;
+  }
+
+  main {
+    padding: 18px 14px;
+  }
+
+  .grid {
+    gap: 9px;
+  }
+
+  .stat {
+    padding: 13px;
+  }
+
+  .amount {
+    font-size: 29px;
+  }
+
+  .quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>
 </head>
+
 <body>
 
-<header>
-<button class="menu" onclick="toggleMenu()">☰</button>
-<div class="brand">🌬️ SKY POWER ENERGY</div>
+<!-- HEADER -->
+<header class="topbar">
+  <div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <span class="brand">SKY POWER ENERGY</span>
+  </div>
+  <span style="color:var(--gold);font-size:20px">♢</span>
 </header>
 
 <div class="layout">
 
-<nav class="sidebar" id="sidebar">
-<button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
-<button onclick="showPage('wallet',this)">💳 My Wallet</button>
-<button onclick="showPage('investment',this)">📈 Investment</button>
-<button onclick="showPage('deposits',this)">⬇ Deposit History</button>
-<button onclick="showPage('withdrawals',this)">⬆ Withdrawal History</button>
-<button onclick="showPage('referrals',this)">👥 Referral Team</button>
-<button onclick="showPage('profile',this)">👤 My Profile</button>
-<button onclick="showPage('settings',this)">⚙ Settings</button>
-</nav>
+<!-- SIDEBAR NAVIGATION -->
+<aside class="sidebar" id="sidebar">
 
+  <button class="nav active"
+    onclick="showPage('Dashboard',this)">
+    ⌂ &nbsp; Dashboard
+  </button>
+
+  <button class="nav"
+    onclick="showPage('My Wallet',this)">
+    ▣ &nbsp; My Wallet
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Investment',this)">
+    ↗ &nbsp; Investment
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Deposit History',this)">
+    ◷ &nbsp; Deposit History
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Withdrawal History',this)">
+    ⇩ &nbsp; Withdrawal History
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Referral Team',this)">
+    ♧ &nbsp; Referral Team
+  </button>
+
+  <button class="nav"
+    onclick="showPage('My Profile',this)">
+    ♙ &nbsp; My Profile
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Settings',this)">
+    ⚙ &nbsp; Settings
+  </button>
+
+</aside>
+
+<!-- MAIN DASHBOARD -->
 <main>
 
-<section class="page active" id="dashboard">
-<h1>Dashboard</h1>
-<p>Welcome to Sky Power Energy!</p>
+<section class="page active" id="Dashboard">
 
-<div class="picture">
-<div id="pictureContent">
-<h2>📸 Sky Power Energy</h2>
-<p>Your company picture space</p>
-<label for="companyImage">Choose Picture</label>
-<input type="file" id="companyImage" accept="image/*" onchange="uploadPicture(event)">
-</div>
-<img id="preview">
-</div>
+  <div class="welcome">
+    <h1>Dashboard</h1>
+    <div class="muted">
+      Welcome to your Sky Power Energy account
+    </div>
+  </div>
 
-<div class="wallet">
-<h3>My Wallet</h3>
-<div class="balance">UGX 0.00</div>
-<button class="action green" onclick="showPageById('wallet')">Deposit</button>
-<button class="action" onclick="showPageById('wallet')">Withdraw</button>
-</div>
+  <!-- BALANCE -->
+  <div class="balance">
 
-<div class="cards">
-<div class="card"><strong>30%</strong>Proposed Daily Return</div>
-<div class="card"><strong>5 Days</strong>Proposed Period</div>
-<div class="card"><strong>2,000</strong>Welcome Bonus (UGX)</div>
-<div class="card"><strong>10,000</strong>Minimum Deposit (UGX)</div>
-<div class="card"><strong>2,000</strong>Minimum Withdrawal (UGX)</div>
-<div class="card"><strong>30% / 2% / 1%</strong>Referral Levels</div>
-</div>
+    <div class="balance-label">Total Balance</div>
 
-<div class="notice">
-These are proposed terms, not guaranteed earnings. A 30% daily return is exceptionally high risk. Obtain independent legal and financial review before accepting deposits or promising payouts.
-</div>
+    <div class="amount">UGX 0</div>
 
-<div class="panel">
-<h3>Recent Transactions</h3>
-<p id="recent">No transactions yet.</p>
-</div>
+    <div class="actions">
+      <button class="gold-btn"
+        onclick="showPage('Deposit History')">
+        + Deposit
+      </button>
+
+      <button class="outline-btn"
+        onclick="showPage('Withdrawal History')">
+        Withdraw
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ACCOUNT STATISTICS -->
+  <div class="grid">
+
+    <div class="stat">
+      <div class="stat-icon">↗</div>
+      <div class="stat-label">Total Investment</div>
+      <div class="stat-value">UGX 0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">◈</div>
+      <div class="stat-label">Total Earnings</div>
+      <div class="stat-value">UGX 0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">✧</div>
+      <div class="stat-label">Welcome Bonus</div>
+      <div class="stat-value">UGX 0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">♧</div>
+      <div class="stat-label">Referral Bonus</div>
+      <div class="stat-value">UGX 0</div>
+    </div>
+
+  </div>
+
+  <!-- COMPANY PICTURE -->
+  <div class="section">
+
+    <h2>Company Picture</h2>
+
+    <div class="upload">
+
+      <div style="font-size:34px;color:var(--gold)">
+        ▧
+      </div>
+
+      <strong style="color:#f4d477">
+        Add Sky Power Energy Picture
+      </strong>
+
+      <span class="muted">
+        Choose your company logo or photo
+      </span>
+
+      <input
+        type="file"
+        accept="image/*"
+        onchange="previewImage(event)"
+      >
+
+      <img id="preview"
+        alt="Company picture preview"
+        hidden
+      >
+
+    </div>
+
+  </div>
+
+  <!-- QUICK NAVIGATION -->
+  <div class="section">
+
+    <h2>Quick Navigation</h2>
+
+    <div class="quick">
+
+      <a href="#" onclick="showPage('My Wallet');return false">
+        ▣ My Wallet
+      </a>
+
+      <a href="#" onclick="showPage('Investment');return false">
+        ↗ Investment
+      </a>
+
+      <a href="#" onclick="showPage('Deposit History');return false">
+        ◷ Deposit History
+      </a>
+
+      <a href="#" onclick="showPage('Withdrawal History');return false">
+        ⇩ Withdrawal History
+      </a>
+
+      <a href="#" onclick="showPage('Referral Team');return false">
+        ♧ Referral Team
+      </a>
+
+      <a href="#" onclick="showPage('My Profile');return false">
+        ♙ My Profile
+      </a>
+
+    </div>
+
+  </div>
+
+  <p class="notice">
+    This is a front-end demonstration. Balances are sample values.
+    No real deposits, withdrawals or earnings are processed.
+  </p>
+
 </section>
 
-<section class="page" id="wallet">
-<h1>My Wallet</h1>
-<div class="panel">
-<h3>Deposit Request</h3>
-<input type="number" id="depositAmount" placeholder="Enter amount in UGX">
-<button class="action green" onclick="addTransaction('deposit')">Add Demo Deposit</button>
-<hr>
-<h3>Withdrawal Request</h3>
-<input type="number" id="withdrawAmount" placeholder="Enter amount in UGX">
-<button class="action" onclick="addTransaction('withdrawal')">Add Demo Withdrawal</button>
-<p id="message"></p>
-</div>
-<p>Demo only: no real money is transferred.</p>
+<!-- OTHER PAGES -->
+
+<section class="page" id="My Wallet">
+  <div class="welcome">
+    <h1>My Wallet</h1>
+    <div class="muted">Wallet overview</div>
+  </div>
+
+  <div class="balance">
+    <div class="balance-label">Available Balance</div>
+    <div class="amount">UGX 0</div>
+    <span class="balance-label">Demo balance</span>
+  </div>
 </section>
 
-<section class="page" id="investment">
-<h1>Investment</h1>
-<div class="panel">
-<h3>Proposed Investment Terms</h3>
-<p>Duration: 5 days</p>
-<p>Illustrative daily rate: 30%</p>
-<p>Capital returned: No, under the proposed terms.</p>
-<div class="notice">The full deposit could be lost. Verify the business model, funding source and applicable Ugandan regulations before launching.</div>
-</div>
+<section class="page" id="Investment">
+  <div class="welcome">
+    <h1>Investment</h1>
+    <div class="muted">Investment information</div>
+  </div>
+
+  <div class="section">
+    <h2>Investment Plans</h2>
+    <p class="muted">
+      Add verified plan details, risks, fees and terms here
+      before accepting customer funds.
+    </p>
+  </div>
 </section>
 
-<section class="page" id="deposits">
-<h1>Deposit History</h1>
-<div class="panel">
-<table>
-<thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
-<tbody id="depositHistory"></tbody>
-</table>
-</div>
+<section class="page" id="Deposit History">
+  <div class="welcome">
+    <h1>Deposit History</h1>
+    <div class="muted">Your deposit records</div>
+  </div>
+  <div class="section">No deposit records in this demo.</div>
 </section>
 
-<section class="page" id="withdrawals">
-<h1>Withdrawal History</h1>
-<div class="panel">
-<table>
-<thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
-<tbody id="withdrawHistory"></tbody>
-</table>
-</div>
+<section class="page" id="Withdrawal History">
+  <div class="welcome">
+    <h1>Withdrawal History</h1>
+    <div class="muted">Your withdrawal records</div>
+  </div>
+  <div class="section">No withdrawal records in this demo.</div>
 </section>
 
-<section class="page" id="referrals">
-<h1>Referral Team</h1>
-<div class="panel">
-<h3>Referral Commission Proposal</h3>
-<p>Level 1: 30%</p>
-<p>Level 2: 2%</p>
-<p>Level 3: 1%</p>
-<p>Commission calculations and funding must be verified before activation.</p>
-</div>
+<section class="page" id="Referral Team">
+  <div class="welcome">
+    <h1>Referral Team</h1>
+    <div class="muted">Referral information</div>
+  </div>
+  <div class="section">No referral records in this demo.</div>
 </section>
 
-<section class="page" id="profile">
-<h1>My Profile</h1>
-<div class="panel">
-<p>Account Name: Demo Member</p>
-<p>Phone Number: Not connected</p>
-<p>Account Status: Preview</p>
-</div>
+<section class="page" id="My Profile">
+  <div class="welcome">
+    <h1>My Profile</h1>
+    <div class="muted">Account details</div>
+  </div>
+  <div class="section">
+    Profile details will appear here after secure account setup.
+  </div>
 </section>
 
-<section class="page" id="settings">
-<h1>Settings</h1>
-<div class="panel">
-<p>Account settings</p>
-<p>Security and password settings require a secure backend.</p>
-</div>
+<section class="page" id="Settings">
+  <div class="welcome">
+    <h1>Settings</h1>
+    <div class="muted">Dashboard preferences</div>
+  </div>
+  <div class="section">
+    Account settings will be available after secure setup.
+  </div>
 </section>
 
 </main>
 </div>
 
+<!-- JAVASCRIPT -->
 <script>
-function toggleMenu(){
-document.getElementById('sidebar').classList.toggle('closed');
+
+function toggleMenu() {
+  document.getElementById("sidebar")
+    .classList.toggle("open");
 }
 
-function showPage(id,button){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
-if(button)button.classList.add('active');
-if(window.innerWidth<=700){
-document.getElementById('sidebar').classList.add('closed');
-}
-}
+function showPage(name, button) {
 
-function showPageById(id){
-showPage(id,null);
-}
+  document.querySelectorAll(".page")
+    .forEach(page => page.classList.remove("active"));
 
-function uploadPicture(event){
-const file=event.target.files[0];
-if(!file || !file.type.startsWith('image/'))return;
-const reader=new FileReader();
-reader.onload=function(){
-const img=document.getElementById('preview');
-img.src=reader.result;
-img.style.display='block';
-document.getElementById('pictureContent').style.display='none';
-};
-reader.readAsDataURL(file);
-}
+  const selectedPage = document.getElementById(name);
 
-let deposits=[];
-let withdrawals=[];
+  if (selectedPage) {
+    selectedPage.classList.add("active");
+  }
 
-function addTransaction(type){
-const field=document.getElementById(
-type==='deposit'?'depositAmount':'withdrawAmount'
-);
-const amount=Number(field.value);
-const minimum=type==='deposit'?10000:2000;
+  document.querySelectorAll(".nav")
+    .forEach(nav => nav.classList.remove("active"));
 
-if(!Number.isFinite(amount)||amount<minimum){
-document.getElementById('message').textContent=
-'Minimum amount is UGX '+minimum.toLocaleString();
-return;
+  if (button) {
+    button.classList.add("active");
+  } else {
+    document.querySelectorAll(".nav").forEach(nav => {
+      if (nav.textContent.trim().includes(name)) {
+        nav.classList.add("active");
+      }
+    });
+  }
+
+  document.getElementById("sidebar")
+    .classList.remove("open");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
-const record={
-date:new Date().toLocaleString(),
-amount:amount,
-status:'Demo record only'
-};
+function previewImage(event) {
 
-if(type==='deposit'){
-deposits.push(record);
-renderHistory('depositHistory',deposits);
-}else{
-withdrawals.push(record);
-renderHistory('withdrawHistory',withdrawals);
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Please choose an image file.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+    const image = document.getElementById("preview");
+    image.src = reader.result;
+    image.hidden = false;
+  };
+
+  reader.readAsDataURL(file);
 }
 
-document.getElementById('message').textContent=
-'Demo record created. No money was transferred.';
-field.value='';
-document.getElementById('recent').textContent=
-'Demo transaction recorded.';
-
-}
-
-function renderHistory(id,data){
-document.getElementById(id).innerHTML=data.map(item=>
-`<tr><td>${item.date}</td>
-<td>UGX ${item.amount.toLocaleString()}</td>
-<td>${item.status}</td></tr>`
-).join('');
-}
 </script>
 
 </body>
 </html>
+
