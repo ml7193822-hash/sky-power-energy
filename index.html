@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +36,7 @@ button {
   cursor: pointer;
 }
 
-/* TOP HEADER */
+/* HEADER */
 .topbar {
   height: 65px;
   background: var(--panel2);
@@ -42,16 +44,17 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: 0 15px;
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 20;
 }
 
 .brand {
   color: var(--gold);
   font-weight: bold;
   letter-spacing: 1px;
+  font-size: 16px;
 }
 
 .menu-btn {
@@ -59,7 +62,8 @@ button {
   border: none;
   color: var(--gold);
   font-size: 26px;
-  margin-right: 12px;
+  margin-right: 10px;
+  padding: 5px;
 }
 
 /* LAYOUT */
@@ -68,24 +72,28 @@ button {
   min-height: calc(100vh - 65px);
 }
 
+/* SMALLER SIDEBAR */
 .sidebar {
-  width: 245px;
+  width: 220px;
+  min-width: 220px;
   background: #20190c;
   border-right: 1px solid var(--line);
-  padding: 18px 12px;
+  padding: 15px 10px;
   flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
 .nav {
   display: block;
   width: 100%;
-  padding: 14px;
-  margin: 5px 0;
+  padding: 12px 10px;
+  margin: 4px 0;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
   color: var(--cream);
   text-align: left;
+  font-size: 14px;
 }
 
 .nav:hover,
@@ -95,12 +103,19 @@ button {
   color: var(--gold);
 }
 
+/* BACKDROP */
+.sidebar-backdrop {
+  display: none;
+}
+
 /* MAIN CONTENT */
 main {
+  flex: 1;
   width: 100%;
   max-width: 1200px;
   margin: auto;
   padding: 25px;
+  min-width: 0;
 }
 
 .page {
@@ -126,7 +141,7 @@ main {
   font-size: 13px;
 }
 
-/* BALANCE CARD */
+/* BALANCE */
 .balance {
   background: linear-gradient(
     125deg,
@@ -174,7 +189,7 @@ main {
   padding: 11px 16px;
 }
 
-/* DASHBOARD CARDS */
+/* STATISTICS */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -221,7 +236,7 @@ main {
   margin: 0 0 14px;
 }
 
-/* COMPANY IMAGE UPLOAD */
+/* COMPANY PICTURE */
 .upload {
   border: 1px dashed var(--gold-dark);
   border-radius: 10px;
@@ -278,7 +293,7 @@ main {
   margin-top: 15px;
 }
 
-/* MOBILE RESPONSIVE */
+/* TABLET */
 @media(max-width: 850px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
@@ -289,24 +304,59 @@ main {
   }
 }
 
+/* MOBILE SIDEBAR */
 @media(max-width: 620px) {
+
   .layout {
     display: block;
   }
 
   .sidebar {
-    display: none;
     position: fixed;
-    z-index: 10;
     top: 65px;
     bottom: 0;
     left: 0;
-    width: 260px;
+
+    width: 220px;
+    min-width: 0;
+    max-width: 72vw;
+
+    padding: 12px 9px;
     overflow-y: auto;
+
+    z-index: 30;
+
+    transform: translateX(-105%);
+    transition: transform 0.3s ease;
+
+    box-shadow: 5px 0 20px rgba(0,0,0,0.35);
   }
 
   .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .nav {
+    padding: 12px 10px;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+
+  /* DARK BACKGROUND BEHIND MENU */
+  .sidebar-backdrop {
     display: block;
+    position: fixed;
+    inset: 65px 0 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 25;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+  }
+
+  .sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
   }
 
   main {
@@ -328,6 +378,10 @@ main {
   .quick {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .brand {
+    font-size: 14px;
+  }
 }
 </style>
 </head>
@@ -337,15 +391,19 @@ main {
 <!-- HEADER -->
 <header class="topbar">
   <div>
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <button class="menu-btn"
+      onclick="toggleMenu()"
+      aria-label="Toggle navigation">☰</button>
+
     <span class="brand">SKY POWER ENERGY</span>
   </div>
+
   <span style="color:var(--gold);font-size:20px">♢</span>
 </header>
 
 <div class="layout">
 
-<!-- SIDEBAR NAVIGATION -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 
   <button class="nav active"
@@ -390,7 +448,15 @@ main {
 
 </aside>
 
-<!-- MAIN DASHBOARD -->
+</div>
+
+<!-- BACKDROP -->
+<div class="sidebar-backdrop"
+  id="sidebarBackdrop"
+  onclick="closeMenu()">
+</div>
+
+<!-- MAIN CONTENT -->
 <main>
 
 <section class="page active" id="Dashboard">
@@ -402,11 +468,8 @@ main {
     </div>
   </div>
 
-  <!-- BALANCE -->
   <div class="balance">
-
     <div class="balance-label">Total Balance</div>
-
     <div class="amount">UGX 0</div>
 
     <div class="actions">
@@ -420,10 +483,8 @@ main {
         Withdraw
       </button>
     </div>
-
   </div>
 
-  <!-- ACCOUNT STATISTICS -->
   <div class="grid">
 
     <div class="stat">
@@ -454,7 +515,6 @@ main {
 
   <!-- COMPANY PICTURE -->
   <div class="section">
-
     <h2>Company Picture</h2>
 
     <div class="upload">
@@ -471,24 +531,19 @@ main {
         Choose your company logo or photo
       </span>
 
-      <input
-        type="file"
+      <input type="file"
         accept="image/*"
-        onchange="previewImage(event)"
-      >
+        onchange="previewImage(event)">
 
       <img id="preview"
         alt="Company picture preview"
-        hidden
-      >
+        hidden>
 
     </div>
-
   </div>
 
   <!-- QUICK NAVIGATION -->
   <div class="section">
-
     <h2>Quick Navigation</h2>
 
     <div class="quick">
@@ -518,7 +573,6 @@ main {
       </a>
 
     </div>
-
   </div>
 
   <p class="notice">
@@ -563,7 +617,10 @@ main {
     <h1>Deposit History</h1>
     <div class="muted">Your deposit records</div>
   </div>
-  <div class="section">No deposit records in this demo.</div>
+
+  <div class="section">
+    No deposit records in this demo.
+  </div>
 </section>
 
 <section class="page" id="Withdrawal History">
@@ -571,7 +628,10 @@ main {
     <h1>Withdrawal History</h1>
     <div class="muted">Your withdrawal records</div>
   </div>
-  <div class="section">No withdrawal records in this demo.</div>
+
+  <div class="section">
+    No withdrawal records in this demo.
+  </div>
 </section>
 
 <section class="page" id="Referral Team">
@@ -579,7 +639,10 @@ main {
     <h1>Referral Team</h1>
     <div class="muted">Referral information</div>
   </div>
-  <div class="section">No referral records in this demo.</div>
+
+  <div class="section">
+    No referral records in this demo.
+  </div>
 </section>
 
 <section class="page" id="My Profile">
@@ -587,6 +650,7 @@ main {
     <h1>My Profile</h1>
     <div class="muted">Account details</div>
   </div>
+
   <div class="section">
     Profile details will appear here after secure account setup.
   </div>
@@ -597,20 +661,35 @@ main {
     <h1>Settings</h1>
     <div class="muted">Dashboard preferences</div>
   </div>
+
   <div class="section">
     Account settings will be available after secure setup.
   </div>
 </section>
 
 </main>
-</div>
 
 <!-- JAVASCRIPT -->
 <script>
 
 function toggleMenu() {
+  const sidebar = document.getElementById("sidebar");
+
+  if (sidebar.classList.contains("open")) {
+    closeMenu();
+  } else {
+    sidebar.classList.add("open");
+    document.getElementById("sidebarBackdrop")
+      .classList.add("show");
+  }
+}
+
+function closeMenu() {
   document.getElementById("sidebar")
-    .classList.toggle("open");
+    .classList.remove("open");
+
+  document.getElementById("sidebarBackdrop")
+    .classList.remove("show");
 }
 
 function showPage(name, button) {
@@ -637,8 +716,7 @@ function showPage(name, button) {
     });
   }
 
-  document.getElementById("sidebar")
-    .classList.remove("open");
+  closeMenu();
 
   window.scrollTo({
     top: 0,
@@ -668,8 +746,14 @@ function previewImage(event) {
   reader.readAsDataURL(file);
 }
 
+/* CLOSE MENU WITH ESCAPE KEY */
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    closeMenu();
+  }
+});
+
 </script>
 
 </body>
 </html>
-
