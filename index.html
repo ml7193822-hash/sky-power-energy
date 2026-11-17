@@ -1,320 +1,268 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sky Power Energy | Investor Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sky Power Energy</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f7f4;color:#183528}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.sidebar{position:fixed;top:0;bottom:0;left:0;width:245px;background:#073d27;color:white;padding:23px 15px;overflow:auto}
-.logo{font-size:21px;font-weight:bold;margin-bottom:5px}
-.tag{font-size:10px;color:#b8ddc7;margin-bottom:30px}
-.menu{width:100%;padding:14px;text-align:left;background:transparent;color:#d8eadf;border:0;border-radius:8px;margin:3px 0}
-.menu:hover,.menu.active{background:#176640;color:white}
-.main{margin-left:245px;padding:25px;max-width:1500px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
-.top h2{margin:0}
-.user{background:white;border-radius:30px;padding:10px 15px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 8px #00000008}
-.muted{color:#718579;font-size:13px}
-.amount{font-size:23px;font-weight:bold;margin-top:12px}
-.green{color:#087c43}
-.panel{background:white;border-radius:12px;padding:22px;margin-top:20px;box-shadow:0 2px 8px #00000008}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7ff;color:#102044}
+header{height:75px;background:white;display:flex;align-items:center;padding:12px;gap:15px;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:10}
+.menu{font-size:28px;border:0;background:#edf3ff;padding:8px 13px;border-radius:10px;cursor:pointer}
+.brand{font-size:21px;font-weight:bold;color:#0752c5}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:250px;background:white;padding:15px;transition:.25s;flex-shrink:0}
+.sidebar.closed{width:0;padding:0;overflow:hidden}
+.sidebar button{display:block;width:100%;padding:15px;margin:5px 0;border:0;border-radius:10px;background:white;text-align:left;font-size:15px;color:#102044;cursor:pointer}
+.sidebar button.active{background:#1769f5;color:white}
+main{padding:20px;flex:1;min-width:0}
 .page{display:none}
 .page.active{display:block}
-.products{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.product{background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e4eee7}
-.turbine{font-size:65px;background:#e8f5eb;padding:20px;border-radius:10px}
-.price{font-size:21px;color:#078044;font-weight:bold}
-.btn{background:#087b43;color:white;border:0;border-radius:7px;padding:12px 17px}
-.btn2{background:#e5f3e9;color:#086537;border:0;border-radius:7px;padding:12px 17px}
-input,select{width:100%;padding:13px;border:1px solid #d9e4dc;border-radius:7px;margin:8px 0 15px;background:white}
-label{font-size:13px;font-weight:bold}
-.form{max-width:500px}
+h1{margin-top:5px}
+.picture{height:260px;background:white;border:2px dashed #8bb4ff;border-radius:15px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;margin-bottom:18px}
+.picture img{width:100%;height:100%;object-fit:cover;display:none}
+.picture label{background:#1769f5;color:white;padding:12px 18px;border-radius:8px;display:inline-block;cursor:pointer}
+input[type=file]{display:none}
+.wallet{background:white;padding:22px;border-radius:15px;border:1px solid #d5e2ff;margin-bottom:18px}
+.balance{font-size:30px;font-weight:bold;margin:12px 0}
+button.action{padding:12px 20px;border:0;border-radius:9px;color:white;background:#1769f5;margin:5px;cursor:pointer}
+.green{background:#08a94c!important}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}
+.card{background:white;border:1px solid #dce6fa;padding:17px;border-radius:12px;text-align:center}
+.card strong{display:block;color:#0752c5;font-size:21px;margin-bottom:7px}
+.panel{background:white;border:1px solid #dce6fa;border-radius:12px;padding:18px;margin-top:15px}
+input{padding:12px;width:100%;border:1px solid #ccd8ec;border-radius:8px;margin:8px 0}
 table{width:100%;border-collapse:collapse}
-td,th{padding:13px;text-align:left;border-bottom:1px solid #e8eee9;font-size:13px}
-th{color:#6b7d70}
-.badge{background:#fff3d6;color:#936400;padding:5px 9px;border-radius:15px;font-size:11px}
-.mobile{display:none}
-@media(max-width:850px){
-.sidebar{width:100%;height:auto;bottom:auto;position:relative;padding:12px}
-.logo{font-size:18px;margin-bottom:5px}
-.tag{margin-bottom:8px}
-nav{display:flex;overflow-x:auto}
-.menu{white-space:nowrap;width:auto;padding:10px;font-size:12px}
-.main{margin:0;padding:14px}
+td,th{padding:12px;border-bottom:1px solid #eee;text-align:left}
+.notice{background:#fff5df;padding:12px;border-left:4px solid orange;margin:15px 0;border-radius:6px}
+@media(max-width:700px){
+.sidebar{position:fixed;top:75px;bottom:0;z-index:9;box-shadow:2px 5px 15px #aaa}
+.sidebar.closed{width:0}
 .cards{grid-template-columns:repeat(2,1fr)}
-.products{grid-template-columns:repeat(2,1fr)}
-.top h2{font-size:20px}
-}
-@media(max-width:480px){
-.products{grid-template-columns:1fr}
-.card{padding:14px}
-.amount{font-size:19px}
-.panel{padding:14px;overflow-x:auto}
+main{padding:12px}
+.picture{height:210px}
 }
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
- <div class="logo">🌬️ SKY POWER ENERGY</div>
- <div class="tag">POWERING TOMORROW</div>
- <nav>
-  <button class="menu active" onclick="showPage('dashboard',this)">⌂ Overview</button>
-  <button class="menu" onclick="showPage('deposit',this)">＋ Deposit</button>
-  <button class="menu" onclick="showPage('withdraw',this)">↗ Withdraw</button>
-  <button class="menu" onclick="showPage('products',this)">⚡ Products</button>
-  <button class="menu" onclick="showPage('investments',this)">▤ Investments</button>
-  <button class="menu" onclick="showPage('transactions',this)">◷ Transactions</button>
-  <button class="menu" onclick="showPage('profile',this)">♙ My Profile</button>
-  <button class="menu" onclick="logout()">⇥ Log Out</button>
- </nav>
-</aside>
+<header>
+<button class="menu" onclick="toggleMenu()">☰</button>
+<div class="brand">🌬️ SKY POWER ENERGY</div>
+</header>
 
-<main class="main">
- <div class="top">
-  <h2 id="heading">Dashboard Overview</h2>
-  <div class="user">👤 Investor</div>
- </div>
+<div class="layout">
 
- <section id="dashboard" class="page active">
-  <h2>Welcome to Sky Power Energy</h2>
-  <p class="muted">Your renewable energy investor dashboard.</p>
-  <div class="cards">
-   <div class="card"><div class="muted">Available balance</div><div class="amount" id="balance">UGX 0</div></div>
-   <div class="card"><div class="muted">Total deposits</div><div class="amount" id="deposits">UGX 0</div></div>
-   <div class="card"><div class="muted">Total invested</div><div class="amount" id="invested">UGX 0</div></div>
-   <div class="card"><div class="muted">Withdrawals</div><div class="amount" id="withdrawals">UGX 0</div></div>
-  </div>
-  <div class="panel">
-   <h3>Quick actions</h3>
-   <button class="btn" onclick="showPage('deposit')">Make a deposit</button>
-   <button class="btn2" onclick="showPage('products')">Explore products</button>
-   <button class="btn2" onclick="showPage('withdraw')">Request withdrawal</button>
-  </div>
-  <div class="panel">
-   <h3>Recent activity</h3>
-   <p class="muted" id="activity">No transactions yet.</p>
-  </div>
- </section>
+<nav class="sidebar" id="sidebar">
+<button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+<button onclick="showPage('wallet',this)">💳 My Wallet</button>
+<button onclick="showPage('investment',this)">📈 Investment</button>
+<button onclick="showPage('deposits',this)">⬇ Deposit History</button>
+<button onclick="showPage('withdrawals',this)">⬆ Withdrawal History</button>
+<button onclick="showPage('referrals',this)">👥 Referral Team</button>
+<button onclick="showPage('profile',this)">👤 My Profile</button>
+<button onclick="showPage('settings',this)">⚙ Settings</button>
+</nav>
 
- <section id="deposit" class="page">
-  <h2>Deposit Funds</h2>
-  <p class="muted">Choose your mobile money provider.</p>
-  <div class="panel form">
-   <form onsubmit="depositDemo(event)">
-    <label>Amount (UGX)</label>
-    <input id="depositAmount" type="number" min="1" required placeholder="Enter amount">
-    <label>Payment method</label>
-    <select id="provider">
-     <option>MTN Mobile Money</option>
-     <option>Airtel Money</option>
-    </select>
-    <label>Mobile money number</label>
-    <input type="tel" required placeholder="Your registered phone number">
-    <button class="btn">Submit deposit request</button>
-   </form>
-   <p class="muted">Demo only: no payment is collected or processed. A verified payment gateway and server are required.</p>
-  </div>
- </section>
+<main>
 
- <section id="withdraw" class="page">
-  <h2>Withdraw Funds</h2>
-  <div class="panel form">
-   <form onsubmit="withdrawDemo(event)">
-    <label>Withdrawal amount (UGX)</label>
-    <input id="withdrawAmount" type="number" min="1" required placeholder="Enter amount">
-    <label>Mobile money provider</label>
-    <select id="withdrawProvider">
-     <option>MTN Mobile Money</option>
-     <option>Airtel Money</option>
-    </select>
-    <label>Phone number</label>
-    <input type="tel" required placeholder="Mobile money number">
-    <button class="btn">Submit withdrawal request</button>
-   </form>
-   <p class="muted">Requests require server-side balance checks and administrator approval.</p>
-  </div>
- </section>
+<section class="page active" id="dashboard">
+<h1>Dashboard</h1>
+<p>Welcome to Sky Power Energy!</p>
 
- <section id="products" class="page">
-  <h2>Our Wind Turbine Products</h2>
-  <p class="muted">Sky Wind Energy product catalogue.</p>
-  <div class="products" id="productList"></div>
- </section>
+<div class="picture">
+<div id="pictureContent">
+<h2>📸 Sky Power Energy</h2>
+<p>Your company picture space</p>
+<label for="companyImage">Choose Picture</label>
+<input type="file" id="companyImage" accept="image/*" onchange="uploadPicture(event)">
+</div>
+<img id="preview">
+</div>
 
- <section id="investments" class="page">
-  <h2>My Investments</h2>
-  <div class="panel">
-   <table>
-    <thead><tr><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
-    <tbody id="investmentRows"><tr><td colspan="3">No investments yet.</td></tr></tbody>
-   </table>
-  </div>
- </section>
+<div class="wallet">
+<h3>My Wallet</h3>
+<div class="balance">UGX 0.00</div>
+<button class="action green" onclick="showPageById('wallet')">Deposit</button>
+<button class="action" onclick="showPageById('wallet')">Withdraw</button>
+</div>
 
- <section id="transactions" class="page">
-  <h2>Transaction History</h2>
-  <div class="panel">
-   <table>
-    <thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
-    <tbody id="transactionRows"><tr><td colspan="3">No transactions yet.</td></tr></tbody>
-   </table>
-  </div>
- </section>
+<div class="cards">
+<div class="card"><strong>30%</strong>Proposed Daily Return</div>
+<div class="card"><strong>5 Days</strong>Proposed Period</div>
+<div class="card"><strong>2,000</strong>Welcome Bonus (UGX)</div>
+<div class="card"><strong>10,000</strong>Minimum Deposit (UGX)</div>
+<div class="card"><strong>2,000</strong>Minimum Withdrawal (UGX)</div>
+<div class="card"><strong>30% / 2% / 1%</strong>Referral Levels</div>
+</div>
 
- <section id="profile" class="page">
-  <h2>My Profile</h2>
-  <div class="panel form">
-   <form onsubmit="saveProfile(event)">
-    <label>Full name</label>
-    <input id="fullName" placeholder="Your full name">
-    <label>Email address</label>
-    <input id="email" type="email" placeholder="Your email">
-    <label>Phone number</label>
-    <input id="phone" type="tel" placeholder="Your phone number">
-    <label>Country</label>
-    <input value="Uganda" disabled>
-    <button class="btn">Save profile (demo)</button>
-   </form>
-  </div>
- </section>
+<div class="notice">
+These are proposed terms, not guaranteed earnings. A 30% daily return is exceptionally high risk. Obtain independent legal and financial review before accepting deposits or promising payouts.
+</div>
 
- <footer class="panel">
-  <b>SKY POWER ENERGY</b>
-  <p class="muted">Renewable energy innovation in Uganda.</p>
-  <p class="muted">Investor portal demonstration. Investment terms and returns must be verified before launch.</p>
- </footer>
+<div class="panel">
+<h3>Recent Transactions</h3>
+<p id="recent">No transactions yet.</p>
+</div>
+</section>
+
+<section class="page" id="wallet">
+<h1>My Wallet</h1>
+<div class="panel">
+<h3>Deposit Request</h3>
+<input type="number" id="depositAmount" placeholder="Enter amount in UGX">
+<button class="action green" onclick="addTransaction('deposit')">Add Demo Deposit</button>
+<hr>
+<h3>Withdrawal Request</h3>
+<input type="number" id="withdrawAmount" placeholder="Enter amount in UGX">
+<button class="action" onclick="addTransaction('withdrawal')">Add Demo Withdrawal</button>
+<p id="message"></p>
+</div>
+<p>Demo only: no real money is transferred.</p>
+</section>
+
+<section class="page" id="investment">
+<h1>Investment</h1>
+<div class="panel">
+<h3>Proposed Investment Terms</h3>
+<p>Duration: 5 days</p>
+<p>Illustrative daily rate: 30%</p>
+<p>Capital returned: No, under the proposed terms.</p>
+<div class="notice">The full deposit could be lost. Verify the business model, funding source and applicable Ugandan regulations before launching.</div>
+</div>
+</section>
+
+<section class="page" id="deposits">
+<h1>Deposit History</h1>
+<div class="panel">
+<table>
+<thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody id="depositHistory"></tbody>
+</table>
+</div>
+</section>
+
+<section class="page" id="withdrawals">
+<h1>Withdrawal History</h1>
+<div class="panel">
+<table>
+<thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody id="withdrawHistory"></tbody>
+</table>
+</div>
+</section>
+
+<section class="page" id="referrals">
+<h1>Referral Team</h1>
+<div class="panel">
+<h3>Referral Commission Proposal</h3>
+<p>Level 1: 30%</p>
+<p>Level 2: 2%</p>
+<p>Level 3: 1%</p>
+<p>Commission calculations and funding must be verified before activation.</p>
+</div>
+</section>
+
+<section class="page" id="profile">
+<h1>My Profile</h1>
+<div class="panel">
+<p>Account Name: Demo Member</p>
+<p>Phone Number: Not connected</p>
+<p>Account Status: Preview</p>
+</div>
+</section>
+
+<section class="page" id="settings">
+<h1>Settings</h1>
+<div class="panel">
+<p>Account settings</p>
+<p>Security and password settings require a secure backend.</p>
+</div>
+</section>
+
 </main>
+</div>
 
 <script>
-const products=[
- ["SKY WIND ENERGY 1",5000],
- ["SKY WIND ENERGY 2",15000],
- ["SKY WIND ENERGY 3",30000],
- ["SKY WIND ENERGY 4",50000],
- ["SKY WIND ENERGY 5",100000],
- ["SKY WIND ENERGY 6",300000],
- ["SKY WIND ENERGY 7",500000],
- ["SKY WIND ENERGY 8",1000000],
- ["SKY WIND ENERGY 9",2000000]
-];
-
-let transactions=[];
-let investments=[];
-let totalDeposits=0;
-let totalWithdrawals=0;
-let totalInvested=0;
-let balance=0;
-
-function money(n){
- return "UGX "+Number(n).toLocaleString("en-UG");
+function toggleMenu(){
+document.getElementById('sidebar').classList.toggle('closed');
 }
 
 function showPage(id,button){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".menu").forEach(b=>b.classList.remove("active"));
- if(button) button.classList.add("active");
- const names={
- dashboard:"Dashboard Overview",
- deposit:"Deposit Funds",
- withdraw:"Withdraw Funds",
- products:"Our Products",
- investments:"My Investments",
- transactions:"Transaction History",
- profile:"My Profile"
- };
- document.getElementById("heading").textContent=names[id];
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
+if(button)button.classList.add('active');
+if(window.innerWidth<=700){
+document.getElementById('sidebar').classList.add('closed');
+}
 }
 
-function renderProducts(){
- const list=document.getElementById("productList");
- products.forEach((p,i)=>{
-  list.innerHTML+=`
-   <div class="product">
-    <div class="turbine">🌬️</div>
-    <h3>${p[0]}</h3>
-    <div class="price">${money(p[1])}</div>
-    <p class="muted">Wind turbine product ${i+1}</p>
-    <button class="btn" onclick="selectProduct(${i})">View product</button>
-   </div>`;
- });
+function showPageById(id){
+showPage(id,null);
 }
 
-function selectProduct(i){
- const p=products[i];
- if(confirm("Selected "+p[0]+" for "+money(p[1])+". Submit a demo investment request?")){
-  investments.push({name:p[0],amount:p[1],status:"Pending"});
-  totalInvested+=p[1];
-  render();
-  showPage("investments");
- }
+function uploadPicture(event){
+const file=event.target.files[0];
+if(!file || !file.type.startsWith('image/'))return;
+const reader=new FileReader();
+reader.onload=function(){
+const img=document.getElementById('preview');
+img.src=reader.result;
+img.style.display='block';
+document.getElementById('pictureContent').style.display='none';
+};
+reader.readAsDataURL(file);
 }
 
-function depositDemo(e){
- e.preventDefault();
- const amount=Number(document.getElementById("depositAmount").value);
- if(amount<=0)return;
- transactions.push({type:"Deposit request",amount,status:"Pending"});
- render();
- alert("Demo deposit request recorded as pending. No money has been transferred.");
- e.target.reset();
+let deposits=[];
+let withdrawals=[];
+
+function addTransaction(type){
+const field=document.getElementById(
+type==='deposit'?'depositAmount':'withdrawAmount'
+);
+const amount=Number(field.value);
+const minimum=type==='deposit'?10000:2000;
+
+if(!Number.isFinite(amount)||amount<minimum){
+document.getElementById('message').textContent=
+'Minimum amount is UGX '+minimum.toLocaleString();
+return;
 }
 
-function withdrawDemo(e){
- e.preventDefault();
- const amount=Number(document.getElementById("withdrawAmount").value);
- if(amount<=0)return;
- transactions.push({type:"Withdrawal request",amount,status:"Pending"});
- render();
- alert("Demo withdrawal request recorded as pending. No money has been transferred.");
- e.target.reset();
+const record={
+date:new Date().toLocaleString(),
+amount:amount,
+status:'Demo record only'
+};
+
+if(type==='deposit'){
+deposits.push(record);
+renderHistory('depositHistory',deposits);
+}else{
+withdrawals.push(record);
+renderHistory('withdrawHistory',withdrawals);
 }
 
-function saveProfile(e){
- e.preventDefault();
- alert("Demo profile form submitted. Connect a secure backend to save profile changes.");
+document.getElementById('message').textContent=
+'Demo record created. No money was transferred.';
+field.value='';
+document.getElementById('recent').textContent=
+'Demo transaction recorded.';
+
 }
 
-function render(){
- document.getElementById("balance").textContent=money(balance);
- document.getElementById("deposits").textContent=money(totalDeposits);
- document.getElementById("withdrawals").textContent=money(totalWithdrawals);
- document.getElementById("invested").textContent=money(totalInvested);
-
- document.getElementById("transactionRows").innerHTML=
- transactions.length?transactions.map(t=>`
- <tr><td>${t.type}</td><td>${money(t.amount)}</td>
- <td><span class="badge">${t.status}</span></td></tr>`).join("")
- :'<tr><td colspan="3">No transactions yet.</td></tr>';
-
- document.getElementById("investmentRows").innerHTML=
- investments.length?investments.map(t=>`
- <tr><td>${t.name}</td><td>${money(t.amount)}</td>
- <td><span class="badge">${t.status}</span></td></tr>`).join("")
- :'<tr><td colspan="3">No investments yet.</td></tr>';
-
- document.getElementById("activity").textContent=
- transactions.length?transactions[transactions.length-1].type+" — "+money(transactions[transactions.length-1].amount):"No transactions yet.";
+function renderHistory(id,data){
+document.getElementById(id).innerHTML=data.map(item=>
+`<tr><td>${item.date}</td>
+<td>UGX ${item.amount.toLocaleString()}</td>
+<td>${item.status}</td></tr>`
+).join('');
 }
-
-function logout(){
- if(confirm("Are you sure you want to log out?")){
-  alert("This is a dashboard preview. Real account sign-out requires authentication.");
-  showPage("dashboard");
- }
-}
-
-renderProducts();
-render();
 </script>
+
 </body>
 </html>
-
