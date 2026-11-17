@@ -9,6 +9,7 @@
 <title>Sky Power Energy Dashboard</title>
 
 <style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 :root {
   --bg: #17130b;
   --panel: #292111;
@@ -387,6 +388,65 @@ main {
 </head>
 
 <body>
+  
+<!-- LOGIN AND REGISTRATION -->
+<div id="authScreen" style="
+  min-height:100vh;
+  background:#17130b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    width:100%;
+    max-width:400px;
+    background:#292111;
+    border:1px solid #a77b16;
+    border-radius:16px;
+    padding:25px;
+    color:#f4e6bd;
+  ">
+    <h2 style="color:#e5b83d;text-align:center">
+      SKY POWER ENERGY
+    </h2>
+
+    <p style="text-align:center;color:#c8b77f">
+      Welcome! Create your account or sign in.
+    </p>
+
+    <input id="fullName" placeholder="Full name"
+      style="width:100%;padding:13px;margin:8px 0">
+
+    <input id="email" type="email" placeholder="Email address"
+      style="width:100%;padding:13px;margin:8px 0">
+
+    <input id="password" type="password" placeholder="Password"
+      style="width:100%;padding:13px;margin:8px 0">
+
+    <input id="referralCode" placeholder="Referral code (optional)"
+      style="width:100%;padding:13px;margin:8px 0">
+
+    <button onclick="registerUser()" style="
+      width:100%;padding:13px;margin-top:12px;
+      background:#e5b83d;border:0;border-radius:8px;
+      font-weight:bold;color:#241a08">
+      Create Account
+    </button>
+
+    <button onclick="loginUser()" style="
+      width:100%;padding:13px;margin-top:10px;
+      background:#241b0a;border:1px solid #a77b16;
+      border-radius:8px;color:#e5b83d">
+      Login
+    </button>
+
+    <p id="authMessage"
+      style="text-align:center;color:#e5b83d;font-size:13px">
+    </p>
+  </div>
+</div>
+
 
 <!-- HEADER -->
 <header class="topbar">
@@ -671,6 +731,107 @@ main {
 
 <!-- JAVASCRIPT -->
 <script>
+  const SUPABASE_URL = "https://wwcfmprhqgfjxtdwexpj.supabase.co";
+
+const SUPABASE_ANON_KEY = "sb_publishable_9W0mPe3AECu0aWi3I-Yn9g_1AL8Rj1r";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+  
+// Hide dashboard until a member signs in
+document.querySelector(".layout").style.display = "none";
+
+function showApp() {
+  document.getElementById("authScreen").style.display = "none";
+  document.querySelector(".layout").style.display = "flex";
+}
+
+function showAuthMessage(message) {
+  document.getElementById("authMessage").textContent = message;
+}
+
+// MEMBER REGISTRATION
+async function registerUser() {
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const referralCode = document.getElementById("referralCode").value.trim();
+
+  if (!fullName || !email || !password) {
+    showAuthMessage("Please enter your name, email and password.");
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthMessage("Password must have at least 6 characters.");
+    return;
+  }
+
+  showAuthMessage("Creating your account...");
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        referral_code: referralCode || null
+      }
+    }
+  });
+
+  if (error) {
+    showAuthMessage(error.message);
+    return;
+  }
+
+  if (data.session) {
+    showApp();
+    showAuthMessage("");
+  } else {
+    showAuthMessage("Account created. Check your email to confirm your account, then log in.");
+  }
+}
+
+// MEMBER LOGIN
+async function loginUser() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showAuthMessage("Enter your email and password.");
+    return;
+  }
+
+  showAuthMessage("Signing in...");
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showAuthMessage(error.message);
+    return;
+  }
+
+  showApp();
+  showAuthMessage("");
+}
+
+// CHECK EXISTING LOGIN
+async function checkLogin() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (!error && data.session) {
+    showApp();
+  }
+}
+
+checkLogin();
+
 
 function toggleMenu() {
   const sidebar = document.getElementById("sidebar");
