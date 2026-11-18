@@ -464,6 +464,7 @@ main {
 
 <div class="layout">
 
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 
@@ -480,6 +481,11 @@ main {
   <button class="nav"
     onclick="showPage('Investment',this)">
     ↗ &nbsp; Investment
+  </button>
+
+  <button class="nav"
+    onclick="showPage('Deposit',this)">
+    💰 &nbsp; Deposit
   </button>
 
   <button class="nav"
@@ -508,6 +514,7 @@ main {
   </button>
 
 </aside>
+
 
 <!-- BACKDROP -->
 <div class="sidebar-backdrop"
@@ -642,6 +649,69 @@ main {
 </section>
 
 <!-- OTHER PAGES -->
+  
+<section class="page" id="Deposit">
+
+  <div class="welcome">
+    <h1>Make a Deposit</h1>
+    <div class="muted">Fund your Sky Power Energy wallet</div>
+  </div>
+
+  <div class="section">
+    <h2>Choose Payment Network</h2>
+
+    <select id="depositNetwork"
+      style="width:100%;padding:14px;background:#211a0c;color:#f4e6bd;border:1px solid #80601c;border-radius:8px">
+      <option value="MTN">MTN Mobile Money</option>
+      <option value="Airtel">Airtel Money</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h2>Send Money To</h2>
+
+    <div style="background:#211a0c;padding:15px;border-radius:10px;margin-bottom:12px">
+      <strong style="color:#e5b83d">MTN MOBILE MONEY</strong>
+      <h2 style="font-size:25px;margin:10px 0">0783 865487</h2>
+      <p>Dina Nasiguza</p>
+    </div>
+
+    <div style="background:#211a0c;padding:15px;border-radius:10px">
+      <strong style="color:#e5b83d">AIRTEL MONEY</strong>
+      <h2 style="font-size:25px;margin:10px 0">0707728435</h2>
+      <p>BAKASHABARUHANGA ASA</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Submit Deposit Details</h2>
+
+    <label>Amount (UGX)</label>
+    <input id="depositAmount" type="number"
+      min="1" placeholder="Enter amount"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+
+    <label>Your Mobile Money Number</label>
+    <input id="depositPhone" type="tel"
+      placeholder="Enter your phone number"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+
+    <label>Transaction Reference</label>
+    <input id="depositReference" type="text"
+      placeholder="Enter payment transaction ID"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+
+    <button class="gold-btn"
+      style="width:100%;margin-top:15px"
+      onclick="submitDeposit()">
+      Submit Deposit
+    </button>
+
+    <p id="depositMessage" class="notice"></p>
+  </div>
+
+</section>
+
 
 
 <section class="page" id="My Wallet">
@@ -875,6 +945,58 @@ async function loadWallet() {
 
   messageElement.textContent = "Your account balance";
 }
+  
+async function submitDeposit() {
+  const amount = Number(document.getElementById("depositAmount").value);
+  const network = document.getElementById("depositNetwork").value;
+  const phone = document.getElementById("depositPhone").value.trim();
+  const reference = document.getElementById("depositReference").value.trim();
+  const message = document.getElementById("depositMessage");
+
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
+    message.textContent = "Enter a valid amount.";
+    return;
+  }
+
+  if (!phone || !reference) {
+    message.textContent = "Enter your phone number and transaction reference.";
+    return;
+  }
+
+  message.textContent = "Submitting deposit...";
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !user) {
+    message.textContent = "Please log in again.";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("deposits")
+    .insert({
+      user_id: user.id,
+      amount: amount,
+      network: network,
+      phone_number: phone,
+      transaction_reference: reference
+    });
+
+  if (error) {
+    console.error(error);
+    message.textContent = "Deposit error: " + error.message;
+    return;
+  }
+
+  message.textContent =
+    "Deposit submitted successfully. Awaiting verification.";
+
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("depositPhone").value = "";
+  document.getElementById("depositReference").value = "";
+}
+
 
 
 
