@@ -1041,6 +1041,16 @@ main {
   </p>
 </div>
   
+<!-- PENDING COMPANY FUND SUBMISSIONS -->
+<div class="section">
+  <h2>📋 Company Fund Verification</h2>
+
+  <div id="companyFundSubmissions">
+    <p class="muted">Loading fund submissions...</p>
+  </div>
+</div>
+
+  
 
 
 
@@ -2163,6 +2173,7 @@ function showPage(name, button) {
   loadAdminStats();
   loadAdminMembers();
   loadAdminProfitFunds();
+  loadCompanyFundSubmissions()
   }
 
   document.querySelectorAll(".nav")
@@ -2260,6 +2271,56 @@ async function submitCompanyProfitFund() {
   sourceInput.value = "";
   proofInput.value = "";
 }
+  
+async function loadCompanyFundSubmissions() {
+  const container = document.getElementById("companyFundSubmissions");
+
+  container.textContent = "Loading submissions...";
+
+  const { data, error } = await supabaseClient
+    .from("company_profit_fund_submissions")
+    .select("id, amount, profit_source, proof_reference, status, submitted_at")
+    .order("submitted_at", { ascending: false });
+
+  if (error) {
+    console.error("Fund submissions error:", error);
+    container.textContent = "Could not load submissions: " + error.message;
+    return;
+  }
+
+  container.replaceChildren();
+
+  if (!data || data.length === 0) {
+    container.textContent = "No company fund submissions yet.";
+    return;
+  }
+
+  data.forEach(fund => {
+    const card = document.createElement("div");
+    card.className = "investment-card";
+
+    const amount = document.createElement("h3");
+    amount.textContent =
+      "UGX " + Number(fund.amount).toLocaleString("en-UG");
+
+    const source = document.createElement("p");
+    source.textContent = "Source: " + fund.profit_source;
+
+    const proof = document.createElement("p");
+    proof.textContent = "Proof reference: " + fund.proof_reference;
+
+    const status = document.createElement("p");
+    status.textContent = "Status: " + fund.status.toUpperCase();
+
+    const date = document.createElement("p");
+    date.textContent =
+      "Submitted: " + new Date(fund.submitted_at).toLocaleString("en-UG");
+
+    card.append(amount, source, proof, status, date);
+    container.appendChild(card);
+  });
+}
+
 
 
 </script>
