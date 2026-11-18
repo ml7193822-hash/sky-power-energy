@@ -850,6 +850,29 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
+  // TEST SUPABASE CONNECTION
+async function testSupabaseConnection() {
+  const message = document.getElementById("authMessage");
+
+  message.textContent = "Testing Supabase connection...";
+
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      message.textContent = "Connection error: " + error.message;
+      console.error(error);
+      return;
+    }
+
+    message.textContent = "Supabase connection successful!";
+    console.log("Supabase connected:", data);
+  } catch (error) {
+    message.textContent = "Connection failed: " + error.message;
+    console.error(error);
+  }
+}
+  testSupabaseConnection();
   
 // Hide dashboard until a member signs in
 document.querySelector(".layout").style.display = "none";
