@@ -2627,10 +2627,11 @@ function showApp() {
   document.querySelector(".layout").style.display = "flex";
 
   loadWallet();
-  loadDashboardStats();
+loadDashboardStats();
+
+setTimeout(() => {
   loadDashboardBonuses();
-  }
-  
+}, 500);
 async function loadDashboardBonuses() {
   const dashboard = document.getElementById("Dashboard");
   if (!dashboard) {
