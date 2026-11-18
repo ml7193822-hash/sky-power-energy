@@ -711,6 +711,25 @@ main {
   </div>
 
 </section>
+  
+<!-- DEPOSIT HISTORY -->
+<section class="page" id="Deposit History">
+
+  <div class="welcome">
+    <h1>Deposit History</h1>
+    <div class="muted">Track all your deposits</div>
+  </div>
+
+  <div class="section">
+    <h2>My Transactions</h2>
+
+    <div id="depositHistoryList">
+      <p class="muted">Loading deposit history...</p>
+    </div>
+  </div>
+
+</section>
+
 
 
 
@@ -910,6 +929,86 @@ async function checkLogin() {
 
 checkLogin();
   
+async function loadDepositHistory() {
+  const container = document.getElementById("depositHistoryList");
+
+  container.textContent = "Loading deposit history...";
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !user) {
+    container.textContent = "Please log in again.";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("deposits")
+    .select("amount, network, phone_number, transaction_reference, status, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    container.textContent = "Could not load deposit history: " + error.message;
+    return;
+  }
+
+  container.replaceChildren();
+
+  if (!data || data.length === 0) {
+    container.textContent = "You have no deposit transactions yet.";
+    return;
+  }
+
+  data.forEach(deposit => {
+    const card = document.createElement("div");
+
+    card.style.cssText = `
+      background:#211a0c;
+      border:1px solid #80601c;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:12px;
+    `;
+
+    const status = String(deposit.status || "pending").toLowerCase();
+
+    const statusColors = {
+      pending: "#e5b83d",
+      approved: "#4ade80",
+      rejected: "#f87171"
+    };
+
+    const details = [
+      ["Amount", "UGX " + Number(deposit.amount).toLocaleString("en-UG")],
+      ["Network", deposit.network],
+      ["Phone", deposit.phone_number],
+      ["Reference", deposit.transaction_reference],
+      ["Date", new Date(deposit.created_at).toLocaleString("en-UG")]
+    ];
+
+    details.forEach(([label, value]) => {
+      const line = document.createElement("p");
+      line.style.cssText = "color:#f4e6bd;font-size:13px;margin:7px 0;";
+      line.textContent = label + ": " + (value || "Not provided");
+      card.appendChild(line);
+    });
+
+    const statusLine = document.createElement("p");
+    statusLine.style.cssText = `
+      font-weight:bold;
+      color:${statusColors[status] || "#e5b83d"};
+      margin:12px 0 0;
+    `;
+    statusLine.textContent = "Status: " + status.toUpperCase();
+
+    card.appendChild(statusLine);
+    container.appendChild(card);
+  });
+}
+
+  
 async function loadWallet() {
   const balanceElement = document.getElementById("walletBalance");
   const messageElement = document.getElementById("walletMessage");
@@ -1029,6 +1128,9 @@ function showPage(name, button) {
 
   if (selectedPage) {
     selectedPage.classList.add("active");
+  }
+  if (name === "Deposit History") {
+  loadDepositHistory();
   }
 
   document.querySelectorAll(".nav")
