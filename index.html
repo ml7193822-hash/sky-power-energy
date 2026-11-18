@@ -1164,11 +1164,7 @@ async function testSupabaseConnection() {
 // Hide dashboard until a member signs in
 document.querySelector(".layout").style.display = "none";
 
-function showApp() {
-  document.getElementById("authScreen").style.display = "none";
-  document.querySelector(".layout").style.display = "flex";
-  loadWallet();
-}
+
 
 function showAuthMessage(message) {
   document.getElementById("authMessage").textContent = message;
@@ -2710,14 +2706,6 @@ async function loadDashboardBonuses() {
     console.error("Bonus loading error:", error);
   }
 }
-
-
-
-
-
-
-
-
 
 
 
