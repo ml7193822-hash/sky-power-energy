@@ -761,22 +761,60 @@ main {
 </section>
 
 
-  
-
 <section class="page" id="Investment">
   <div class="welcome">
-    <h1>Investment</h1>
-    <div class="muted">Investment information</div>
+    <h1>My Investments</h1>
+    <div class="muted">Track your investment activity</div>
   </div>
 
   <div class="section">
-    <h2>Investment Plans</h2>
+    <h2>Investment Overview</h2>
+
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="muted">Total Invested</div>
+        <h2 id="totalInvested">UGX 0</h2>
+      </div>
+
+      <div class="stat-card">
+        <div class="muted">Active Investments</div>
+        <h2 id="activeInvestments">0</h2>
+      </div>
+
+      <div class="stat-card">
+        <div class="muted">Recorded Earnings</div>
+        <h2 id="totalEarnings">UGX 0</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Active Investments</h2>
+    <div id="activeInvestmentList">
+      <p class="muted">Your active investments will appear here.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Investment History</h2>
+    <div id="investmentHistory">
+      <p class="muted">Your investment history will appear here.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Investment Terms</h2>
     <p class="muted">
-      Add verified plan details, risks, fees and terms here
-      before accepting customer funds.
+      Investment activation, duration, fees, risks and any
+      earnings are subject to verified business terms.
+      No profit is guaranteed.
     </p>
   </div>
 </section>
+
+  
+
+
   
 <!-- WITHDRAWAL REQUEST PAGE -->
 <section class="page" id="Withdrawal">
@@ -1246,6 +1284,78 @@ async function loadDepositHistory() {
     container.appendChild(card);
   });
 }
+  
+async function loadMyInvestments() {
+  const { data: sessionData } =
+    await supabaseClient.auth.getSession();
+
+  const user = sessionData.session?.user;
+
+  if (!user) return;
+
+  const { data, error } = await supabaseClient
+    .from("investments")
+    .select("id, amount, status, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    document.getElementById("investmentHistory").textContent =
+      "Could not load investment history.";
+    console.error(error);
+    return;
+  }
+
+  const history = document.getElementById("investmentHistory");
+  const activeList = document.getElementById("activeInvestmentList");
+
+  history.innerHTML = "";
+  activeList.innerHTML = "";
+
+  let totalInvested = 0;
+  let activeCount = 0;
+
+  data.forEach(investment => {
+    const amount = Number(investment.amount) || 0;
+    totalInvested += amount;
+
+    if (investment.status === "active") {
+      activeCount++;
+    }
+
+    const item = document.createElement("div");
+    item.className = "investment-card";
+
+    item.innerHTML = `
+      <h3>UGX ${amount.toLocaleString()}</h3>
+      <p>Status: ${investment.status}</p>
+      <p>Date: ${new Date(investment.created_at).toLocaleDateString()}</p>
+    `;
+
+    history.appendChild(item);
+
+    if (investment.status === "active") {
+      activeList.appendChild(item.cloneNode(true));
+    }
+  });
+
+  document.getElementById("totalInvested").textContent =
+    "UGX " + totalInvested.toLocaleString();
+
+  document.getElementById("activeInvestments").textContent =
+    activeCount;
+
+  document.getElementById("totalEarnings").textContent =
+    "UGX 0";
+  
+  if (data.length === 0) {
+    history.textContent = "No investments yet.";
+    activeList.textContent = "No active investments.";
+  } else if (activeCount === 0) {
+    activeList.textContent = "No active investments.";
+  }
+}
+
   // LOAD WITHDRAWAL HISTORY
 async function loadWithdrawalHistory() {
   const list = document.getElementById("withdrawalHistoryList");
@@ -1837,6 +1947,7 @@ function showPage(name, button) {
   loadAdminWithdrawals();
   loadAdminStats();
   loadAdminMembers();
+    loadMyInvestments()
   }
 
   document.querySelectorAll(".nav")
