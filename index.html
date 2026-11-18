@@ -2610,8 +2610,7 @@ async function loadDashboardStats() {
       statElements[1].textContent = money(total);
     }
 
-    if (statElements[2]) statElements[2].textContent = "—";
-    if (statElements[3]) statElements[3].textContent = "—";
+    
 
   } catch (error) {
     console.error("Dashboard loading error:", error);
@@ -2729,7 +2728,7 @@ async function testBonusConnection() {
   console.log("REFERRAL ERROR:", referral.error);
 }
 
-loadDashboardBonuses();
+
 
 
 
