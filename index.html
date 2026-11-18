@@ -2327,6 +2327,309 @@ async function loadCompanyFundSubmissions() {
   loadWallet();
   loadDashboardStats();
   }
+  /* SKY POWER ENERGY — WHITE & GOLD DASHBOARD DESIGN */
+
+(function applySkyPowerWhiteDashboard() {
+  const style = document.createElement("style");
+
+  style.textContent = `
+    :root {
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --panel2: #ffffff;
+      --gold: #d99b00;
+      --gold-dark: #b77d00;
+      --cream: #242424;
+      --muted: #777777;
+      --line: #e8e8e8;
+    }
+
+    body {
+      background: #f5f6f8 !important;
+      color: #242424 !important;
+      font-family: Arial, sans-serif;
+    }
+
+    .topbar {
+      background: #ffffff !important;
+      border-bottom: 1px solid #eeeeee !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+
+    .brand, .menu-btn {
+      color: #c58b00 !important;
+    }
+
+    .sidebar {
+      background: #ffffff !important;
+      border-right: 1px solid #eeeeee !important;
+      box-shadow: 2px 0 12px rgba(0,0,0,.025);
+    }
+
+    .nav {
+      color: #333333 !important;
+      border-radius: 10px !important;
+      font-weight: 500;
+    }
+
+    .nav:hover, .nav.active {
+      background: linear-gradient(110deg,#f5c84c,#d99b00) !important;
+      color: #ffffff !important;
+      border-color: transparent !important;
+    }
+
+    main {
+      max-width: 1500px;
+      padding: 24px !important;
+    }
+
+    .welcome h1 {
+      color: #bd8500 !important;
+      font-size: 27px;
+    }
+
+    .muted, .stat-label, .balance-label {
+      color: #777777 !important;
+    }
+
+    .balance {
+      background: linear-gradient(120deg,#f5bd25,#d99500) !important;
+      border: 0 !important;
+      box-shadow: 0 8px 20px rgba(190,135,0,.15);
+      color: #ffffff !important;
+    }
+
+    .balance-label, .amount {
+      color: #ffffff !important;
+    }
+
+    .gold-btn {
+      background: #e2a600 !important;
+      color: #ffffff !important;
+      border: 0 !important;
+      border-radius: 9px !important;
+    }
+
+    .outline-btn {
+      background: transparent !important;
+      color: #ffffff !important;
+      border: 1px solid #ffffff !important;
+    }
+
+    .stat, .section {
+      background: #ffffff !important;
+      border: 1px solid #e9e9e9 !important;
+      border-radius: 14px !important;
+      box-shadow: 0 3px 12px rgba(0,0,0,.035);
+      color: #292929 !important;
+    }
+
+    .stat-icon, .section h2 {
+      color: #d99b00 !important;
+    }
+
+    .stat-value {
+      color: #242424 !important;
+    }
+
+    .upload, .quick a {
+      background: #fffaf0 !important;
+      border-color: #ead9ad !important;
+      color: #333333 !important;
+      border-radius: 12px !important;
+    }
+
+    .notice {
+      color: #777777 !important;
+    }
+
+    .sidebar-backdrop {
+      background: rgba(0,0,0,.45) !important;
+    }
+
+    #authScreen {
+      background: #f5f6f8 !important;
+    }
+
+    #authScreen > div {
+      background: #ffffff !important;
+      color: #292929 !important;
+      border: 1px solid #e5c56d !important;
+      box-shadow: 0 10px 35px rgba(0,0,0,.08);
+    }
+
+    #authScreen input {
+      background: #ffffff !important;
+      color: #222222 !important;
+      border: 1px solid #dddddd !important;
+      border-radius: 8px;
+    }
+
+    #authScreen p {
+      color: #777777 !important;
+    }
+
+    .investment-card, .history-card {
+      background: #ffffff !important;
+      color: #292929 !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+
+    input, select, textarea {
+      background: #ffffff !important;
+      color: #222222 !important;
+      border: 1px solid #dddddd !important;
+      border-radius: 8px;
+    }
+
+    @media(max-width:620px) {
+      main { padding: 16px 12px !important; }
+      .grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .stat-value { font-size: 16px; }
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  const dashboard = document.getElementById("Dashboard");
+  if (!dashboard || dashboard.dataset.whiteDesign === "true") return;
+
+  dashboard.dataset.whiteDesign = "true";
+
+  const welcome = dashboard.querySelector(".welcome");
+
+  if (welcome) {
+    welcome.innerHTML = `
+      <div style="
+        background:linear-gradient(110deg,#fff2cf,#ffffff 55%,#f7e4ae);
+        border:1px solid #ead9ad;
+        border-radius:16px;
+        padding:25px;
+        margin-bottom:20px;
+        min-height:145px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:15px;
+        flex-wrap:wrap;
+      ">
+        <div>
+          <h1 style="color:#242424!important;margin-bottom:8px">
+            Welcome back,
+          </h1>
+          <h2 style="color:#bd8500;margin:0 0 10px">
+            Sky Power Energy Member!
+          </h2>
+          <p style="color:#666;margin:0">
+            Together for a greener and brighter Uganda.
+          </p>
+        </div>
+        <div style="font-size:65px">🌬️☀️</div>
+      </div>
+    `;
+  }
+
+  const balance = dashboard.querySelector(".balance");
+  if (balance) {
+    const label = balance.querySelector(".balance-label");
+    if (label) label.textContent = "Total Balance";
+  }
+
+  const companySection = dashboard.querySelector(".section");
+  if (companySection) {
+    const heading = companySection.querySelector("h2");
+    if (heading) heading.textContent = "Company Picture";
+  }
+})();
+
+
+/* LOAD REAL DASHBOARD FIGURES */
+
+async function loadDashboardStats() {
+  const dashboard = document.getElementById("Dashboard");
+  if (!dashboard) return;
+
+  const balanceElement = dashboard.querySelector(".balance .amount");
+  const statElements = dashboard.querySelectorAll(".grid .stat-value");
+
+  const money = value =>
+    "UGX " + Number(value || 0).toLocaleString("en-UG");
+
+  try {
+    const { data: { user }, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if (authError || !user) return;
+
+    if (balanceElement) balanceElement.textContent = "Loading...";
+    statElements.forEach(item => item.textContent = "Loading...");
+
+    const [wallet, investments, earnings] = await Promise.all([
+      supabaseClient
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle(),
+
+      supabaseClient
+        .from("investments")
+        .select("amount")
+        .eq("user_id", user.id),
+
+      supabaseClient
+        .from("earnings")
+        .select("amount")
+        .eq("user_id", user.id)
+        .eq("status", "approved")
+    ]);
+
+    if (wallet.error) {
+      if (balanceElement) balanceElement.textContent = "Unavailable";
+    } else if (balanceElement) {
+      balanceElement.textContent = money(wallet.data?.balance);
+    }
+
+    if (investments.error) {
+      if (statElements[0]) statElements[0].textContent = "Unavailable";
+    } else if (statElements[0]) {
+      const total = (investments.data || []).reduce(
+        (sum, item) => sum + Number(item.amount || 0), 0
+      );
+      statElements[0].textContent = money(total);
+    }
+
+    if (earnings.error) {
+      if (statElements[1]) statElements[1].textContent = "Unavailable";
+    } else if (statElements[1]) {
+      const total = (earnings.data || []).reduce(
+        (sum, item) => sum + Number(item.amount || 0), 0
+      );
+      statElements[1].textContent = money(total);
+    }
+
+    if (statElements[2]) statElements[2].textContent = "—";
+    if (statElements[3]) statElements[3].textContent = "—";
+
+  } catch (error) {
+    console.error("Dashboard loading error:", error);
+    if (balanceElement) balanceElement.textContent = "Unavailable";
+    statElements.forEach(item => item.textContent = "Unavailable");
+  }
+}
+
+
+/* OPEN DASHBOARD AFTER LOGIN */
+
+function showApp() {
+  document.getElementById("authScreen").style.display = "none";
+  document.querySelector(".layout").style.display = "flex";
+
+  loadWallet();
+  loadDashboardStats();
+  }
 
 
 
