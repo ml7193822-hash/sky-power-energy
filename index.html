@@ -1040,6 +1040,9 @@ main {
     for member earnings. Declared funds are not yet available.
   </p>
 </div>
+  
+
+
 
 <!-- EARNINGS MONITOR -->
 <div class="section">
@@ -1061,6 +1064,51 @@ main {
     </p>
   </div>
 </div>
+  
+<!-- REGISTER COMPANY PROFIT FUNDS -->
+<div class="section">
+  <h2>➕ Register Company Profit Funds</h2>
+
+  <p class="muted">
+    Submit genuine company profit funds for administrator
+    verification. Funds remain unavailable until verified.
+  </p>
+
+  <div class="form-group">
+    <label>Amount (UGX)</label>
+    <input
+      type="number"
+      id="companyFundAmount"
+      placeholder="Enter amount"
+      min="1"
+    >
+  </div>
+
+  <div class="form-group">
+    <label>Source of Funds</label>
+    <input
+      type="text"
+      id="companyFundSource"
+      placeholder="e.g. Company operating profits"
+    >
+  </div>
+
+  <div class="form-group">
+    <label>Proof Reference</label>
+    <input
+      type="text"
+      id="companyFundProof"
+      placeholder="Bank statement or transaction reference"
+    >
+  </div>
+
+  <button onclick="submitCompanyProfitFund()">
+    Submit Funds for Verification
+  </button>
+
+  <p id="companyFundMessage" class="muted"></p>
+</div>
+
 </section>
 
 
@@ -2166,6 +2214,53 @@ document.addEventListener("keydown", function(event) {
     closeMenu();
   }
 });
+  
+async function submitCompanyProfitFund() {
+  const amountInput = document.getElementById("companyFundAmount");
+  const sourceInput = document.getElementById("companyFundSource");
+  const proofInput = document.getElementById("companyFundProof");
+  const message = document.getElementById("companyFundMessage");
+
+  const amount = Number(amountInput.value);
+  const source = sourceInput.value.trim();
+  const proof = proofInput.value.trim();
+
+  if (!Number.isFinite(amount) || amount <= 0 || !source || !proof) {
+    message.textContent = "Please complete all fields correctly.";
+    return;
+  }
+
+  message.textContent = "Submitting...";
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !user) {
+    message.textContent = "Please log in again.";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("company_profit_fund_submissions")
+    .insert({
+      amount,
+      profit_source: source,
+      proof_reference: proof,
+      submitted_by: user.id
+    });
+
+  if (error) {
+    console.error(error);
+    message.textContent = "Submission failed: " + error.message;
+    return;
+  }
+
+  message.textContent = "Submitted successfully. Pending verification.";
+  amountInput.value = "";
+  sourceInput.value = "";
+  proofInput.value = "";
+}
+
 
 </script>
 
