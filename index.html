@@ -1263,8 +1263,8 @@ async function checkAdminAccess() {
 
 // MEMBER LOGIN
 async function loginUser() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
 
   if (!email || !password) {
     showAuthMessage("Enter your email and password.");
