@@ -780,9 +780,7 @@ main {
     <div class="muted">Your deposit records</div>
   </div>
 
-  <div class="section">
-    No deposit records in this demo.
-  </div>
+
 </section>
 
 <section class="page" id="Withdrawal History">
@@ -953,6 +951,7 @@ async function checkAdminAccess() {
   window.location.reload();
   }
 
+
 // MEMBER LOGIN
 async function loginUser() {
   const email = document.getElementById("email").value.trim();
@@ -976,8 +975,9 @@ async function loginUser() {
   }
 
   showApp();
-await checkAdminAccess();
-showAuthMessage("");
+  await checkAdminAccess();
+  showAuthMessage("");
+}
 
 // CHECK EXISTING LOGIN
 async function checkLogin() {
@@ -985,11 +985,12 @@ async function checkLogin() {
 
   if (!error && data.session) {
     showApp();
-await checkAdminAccess();
+    await checkAdminAccess();
   }
 }
 
 checkLogin();
+
   
 async function loadDepositHistory() {
   const container = document.getElementById("depositHistoryList");
