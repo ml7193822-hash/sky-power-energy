@@ -2631,9 +2631,13 @@ function showApp() {
   loadDashboardStats();
   loadDashboardBonuses();
   }
-  async function loadDashboardBonuses() {
+  
+async function loadDashboardBonuses() {
   const dashboard = document.getElementById("Dashboard");
-  if (!dashboard) return;
+  if (!dashboard) {
+    console.error("Dashboard element not found");
+    return;
+  }
 
   const statValues = dashboard.querySelectorAll(".grid .stat-value");
 
@@ -2641,7 +2645,10 @@ function showApp() {
     const { data: { user }, error: authError } =
       await supabaseClient.auth.getUser();
 
-    if (authError || !user) return;
+    if (authError || !user) {
+      console.error("Authentication error:", authError);
+      return;
+    }
 
     const [welcomeResult, referralResult] = await Promise.all([
       supabaseClient
@@ -2658,6 +2665,9 @@ function showApp() {
         .eq("status", "approved")
     ]);
 
+    console.log("Welcome result:", welcomeResult);
+    console.log("Referral result:", referralResult);
+
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
 
@@ -2665,33 +2675,31 @@ function showApp() {
       console.error("Welcome bonus error:", welcomeResult.error);
       if (statValues[2]) statValues[2].textContent = "Unavailable";
     } else {
-      const welcomeTotal = (welcomeResult.data || []).reduce(
+      const total = (welcomeResult.data || []).reduce(
         (sum, item) => sum + Number(item.amount || 0), 0
       );
 
-      if (statValues[2]) {
-        statValues[2].textContent = money(welcomeTotal);
-      }
+      if (statValues[2]) statValues[2].textContent = money(total);
     }
 
     if (referralResult.error) {
       console.error("Referral bonus error:", referralResult.error);
       if (statValues[3]) statValues[3].textContent = "Unavailable";
     } else {
-      const referralTotal = (referralResult.data || []).reduce(
+      const total = (referralResult.data || []).reduce(
         (sum, item) => sum + Number(item.commission_amount || 0), 0
       );
 
-      if (statValues[3]) {
-        statValues[3].textContent = money(referralTotal);
-      }
+      if (statValues[3]) statValues[3].textContent = money(total);
     }
 
   } catch (error) {
     console.error("Dashboard bonus loading error:", error);
   }
-  }
-  loadDashboardBonuses();
+}
+
+loadDashboardBonuses();
+
 
 
 
