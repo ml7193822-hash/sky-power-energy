@@ -917,6 +917,21 @@ main {
       <p class="muted">Loading withdrawal requests...</p>
     </div>
   </div>
+  <!-- MEMBERS MANAGEMENT -->
+<div class="section">
+  <h2>👥 Members Management</h2>
+
+  <input
+    type="text"
+    id="memberSearch"
+    placeholder="Search members by email..."
+    oninput="filterAdminMembers()"
+  >
+
+  <div id="adminMembersList">
+    <p class="muted">Loading members...</p>
+  </div>
+</div>
 
 </section>
 
@@ -1322,6 +1337,67 @@ async function loadAdminStats() {
   document.getElementById("adminTotalWallets").textContent =
     "UGX " + Number(data.total_wallets).toLocaleString();
 }
+  
+// LOAD ADMIN MEMBERS
+window.adminMembersCache = [];
+
+async function loadAdminMembers() {
+  const list = document.getElementById("adminMembersList");
+
+  list.textContent = "Loading members...";
+
+  const { data, error } = await supabaseClient.rpc(
+    "get_admin_members"
+  );
+
+  if (error) {
+    list.textContent = "Could not load members: " + error.message;
+    return;
+  }
+
+  window.adminMembersCache = data || [];
+  filterAdminMembers();
+}
+
+// SEARCH AND DISPLAY MEMBERS
+function filterAdminMembers() {
+  const list = document.getElementById("adminMembersList");
+  const search = document.getElementById("memberSearch").value
+    .trim()
+    .toLowerCase();
+
+  const members = window.adminMembersCache.filter(member =>
+    (member.member_email || "").toLowerCase().includes(search)
+  );
+
+  list.innerHTML = "";
+
+  if (members.length === 0) {
+    list.textContent = "No members found.";
+    return;
+  }
+
+  members.forEach(member => {
+    const card = document.createElement("div");
+    card.className = "history-card";
+
+    const email = document.createElement("h3");
+    email.textContent = member.member_email || "No email";
+
+    const balance = document.createElement("p");
+    balance.textContent =
+      "Wallet: UGX " +
+      Number(member.wallet_balance).toLocaleString();
+
+    const joined = document.createElement("small");
+    joined.textContent =
+      "Joined: " + new Date(member.joined_at).toLocaleDateString();
+
+    card.append(email, balance, joined);
+    list.appendChild(card);
+  });
+}
+
   // LOAD PENDING WITHDRAWALS
 async function loadAdminWithdrawals() {
   const list = document.getElementById("adminWithdrawalList");
@@ -1590,6 +1666,7 @@ function showPage(name, button) {
   loadAdminDeposits();
   loadAdminWithdrawals();
   loadAdminStats();
+  loadAdminMembers();
   }
 
   document.querySelectorAll(".nav")
