@@ -906,103 +906,155 @@ main {
     Account settings will be available after secure setup.
   </div>
 </section>
-  <!-- ADMIN PANEL -->
+  
+<!-- ADMIN PANEL -->
 <section class="page" id="Admin Panel">
 
   <div class="welcome">
-    <h1>Admin Panel 🛡️</h1>
-    <div class="muted">Manage Sky Power Energy deposits and withdrawals</div>
-  </div>
-  <!-- ADMIN STATISTICS -->
-<div class="grid">
-
-  <div class="stat">
-    <div class="stat-label">Total Deposits</div>
-    <div class="stat-value" id="adminTotalDeposits">UGX 0</div>
+    <h1>🛡️ Admin Dashboard</h1>
+    <div class="muted">
+      Sky Power Energy — Management Centre
+    </div>
   </div>
 
-  <div class="stat">
-    <div class="stat-label">Total Withdrawals</div>
-    <div class="stat-value" id="adminTotalWithdrawals">UGX 0</div>
+  <!-- OVERVIEW -->
+  <div class="grid">
+
+    <div class="stat">
+      <div class="stat-icon">💰</div>
+      <div class="stat-label">Total Deposits</div>
+      <div class="stat-value" id="adminTotalDeposits">
+        UGX 0
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">💸</div>
+      <div class="stat-label">Total Withdrawals</div>
+      <div class="stat-value" id="adminTotalWithdrawals">
+        UGX 0
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">Registered Members</div>
+      <div class="stat-value" id="adminTotalMembers">
+        0
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">💳</div>
+      <div class="stat-label">Total Wallet Balance</div>
+      <div class="stat-value" id="adminTotalWallets">
+        UGX 0
+      </div>
+    </div>
+
   </div>
 
-  <div class="stat">
-    <div class="stat-label">Registered Members</div>
-    <div class="stat-value" id="adminTotalMembers">0</div>
-  </div>
-
-  <div class="stat">
-    <div class="stat-label">Total Wallet Balance</div>
-    <div class="stat-value" id="adminTotalWallets">UGX 0</div>
-  </div>
-
-</div>
-
-  <!-- PENDING DEPOSITS -->
+  <!-- DEPOSIT MANAGEMENT -->
   <div class="section">
-    <h2>Pending Deposits</h2>
+    <h2>💰 Pending Deposits</h2>
+    <p class="muted">
+      Review and manage member deposit requests.
+    </p>
 
     <div id="adminDepositList">
       <p class="muted">Loading deposit requests...</p>
     </div>
   </div>
 
-  <!-- PENDING WITHDRAWALS -->
+  <!-- WITHDRAWAL MANAGEMENT -->
   <div class="section">
-    <h2>Pending Withdrawals 💸</h2>
+    <h2>💸 Pending Withdrawals</h2>
+    <p class="muted">
+      Review member withdrawal requests.
+    </p>
 
     <div id="adminWithdrawalList">
       <p class="muted">Loading withdrawal requests...</p>
     </div>
   </div>
-  <!-- MEMBERS MANAGEMENT -->
-<div class="section">
-  <h2>👥 Members Management</h2>
 
-  <input
-    type="text"
-    id="memberSearch"
-    placeholder="Search members by email..."
-    oninput="filterAdminMembers()"
-  >
-
-  <div id="adminMembersList">
-    <p class="muted">Loading members...</p>
-  </div>
-</div>
-
-</section>
-  <!-- MEMBER DETAILS PAGE -->
-<section class="page" id="Member Details">
-
-  <div class="welcome">
-    <h1>👤 Member Details</h1>
-    <div class="muted">View member account information</div>
-  </div>
-
+  <!-- MEMBERS -->
   <div class="section">
-    <h2>Account Information</h2>
-    <div id="selectedMemberInfo">
-      Select a member to view details.
+    <h2>👥 Members Management</h2>
+
+    <input
+      type="text"
+      id="memberSearch"
+      placeholder="Search members by email..."
+      oninput="filterAdminMembers()"
+      style="width:100%;padding:14px;margin:12px 0;
+      background:#211a0c;color:#f4e6bd;
+      border:1px solid #a77b16;border-radius:9px;"
+    >
+
+    <div id="adminMembersList">
+      <p class="muted">Loading members...</p>
     </div>
   </div>
 
+  <!-- COMPANY FUNDS -->
   <div class="section">
-    <h2>Deposit History</h2>
-    <div id="selectedMemberDeposits"></div>
+    <h2>🏦 Company Profit Funds</h2>
+
+    <div style="
+      background:#211a0c;
+      border:1px solid #a77b16;
+      padding:18px;
+      border-radius:12px;
+    ">
+      <div class="muted">Declared company funds</div>
+
+      <h2 style="color:#e5b83d">
+        UGX 300,000,000
+      </h2>
+
+      <p style="color:#e5b83d">
+        Status: Pending verification
+      </p>
+
+      <p class="muted">
+        Funds must be independently verified before
+        they can be used for member earnings.
+      </p>
+    </div>
   </div>
 
+  <!-- EARNINGS MONITOR -->
   <div class="section">
-    <h2>Withdrawal History</h2>
-    <div id="selectedMemberWithdrawals"></div>
-  </div>
+    <h2>📈 Daily Earnings Monitor</h2>
 
-  <button class="outline-btn"
-    onclick="showPage('Admin Panel')">
-    ← Back to Admin Panel
-  </button>
+    <p class="muted">
+      Automatic earnings processing schedule:
+    </p>
+
+    <div style="
+      background:#211a0c;
+      padding:15px;
+      border-radius:10px;
+      border:1px solid #80601c;
+    ">
+      <h3 style="color:#e5b83d">
+        5:00 PM — Uganda Time
+      </h3>
+
+      <p class="muted">
+        Earnings are processed only when verified
+        company funds are available.
+      </p>
+
+      <p style="color:#e5b83d">
+        Automatic schedule: Configured
+      </p>
+    </div>
+  </div>
 
 </section>
+
 
 </main>
 </div>
