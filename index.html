@@ -881,16 +881,36 @@ main {
   </div>
 </section>
 
+
 <section class="page" id="Referral Team">
   <div class="welcome">
     <h1>Referral Team</h1>
-    <div class="muted">Referral information</div>
+    <div class="muted">Your invited members and referral activity</div>
   </div>
 
   <div class="section">
-    No referral records in this demo.
+    <h3>Total Direct Referrals</h3>
+    <h2 id="referralCount">0</h2>
+  </div>
+
+  <div class="section">
+    <h3>Your Referral Code</h3>
+    <p id="myReferralCode">Loading...</p>
+    <button onclick="copyReferralCode()">Copy Code</button>
+  </div>
+
+  <div class="section">
+    <h3>Your Referral Link</h3>
+    <p id="myReferralLink">Loading...</p>
+    <button onclick="copyReferralLink()">Copy Link</button>
+  </div>
+
+  <div class="section">
+    <h3>My Referral Members</h3>
+    <div id="referralMembers">Loading referrals...</div>
   </div>
 </section>
+
 
 <section class="page" id="My Profile">
   <div class="welcome">
@@ -1186,6 +1206,109 @@ async function loadProfile() {
   status.textContent = error.message || "Unknown error";
   }
    } 
+  
+async function loadReferralTeam() {
+  const countElement = document.getElementById("referralCount");
+  const codeElement = document.getElementById("myReferralCode");
+  const linkElement = document.getElementById("myReferralLink");
+  const membersElement = document.getElementById("referralMembers");
+
+  try {
+    const { data: authData, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if (authError) throw authError;
+
+    const user = authData.user;
+    if (!user) throw new Error("Please log in first.");
+
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("referral_code")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    const code = profile.referral_code || "Not assigned";
+    codeElement.textContent = code;
+
+    const referralLink =
+      `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(code)}`;
+
+    linkElement.textContent = referralLink;
+
+    const { data: referrals, error } = await supabaseClient
+      .from("referrals")
+      .select("id, referred_user_id, created_at")
+      .eq("referrer_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    countElement.textContent = referrals.length;
+
+    if (!referrals.length) {
+      membersElement.textContent = "No referrals yet.";
+      return;
+    }
+
+    const memberIds = referrals.map(r => r.referred_user_id);
+
+    const { data: profiles, error: membersError } =
+      await supabaseClient
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", memberIds);
+
+    if (membersError) throw membersError;
+
+    membersElement.innerHTML = referrals.map(referral => {
+      const member = profiles.find(
+        p => p.id === referral.referred_user_id
+      );
+
+      return `
+        <div class="section">
+          <strong>${escapeHTML(member?.full_name || "Member")}</strong>
+          <p>Joined: ${new Date(referral.created_at).toLocaleDateString()}</p>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Referral loading error:", error);
+    membersElement.textContent = error.message;
+  }
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function copyReferralCode() {
+  const code = document.getElementById("myReferralCode").textContent;
+  if (code !== "Not assigned") {
+    navigator.clipboard.writeText(code);
+    alert("Referral code copied!");
+  }
+}
+
+function copyReferralLink() {
+  const link = document.getElementById("myReferralLink").textContent;
+  if (link !== "Loading...") {
+    navigator.clipboard.writeText(link);
+    alert("Referral link copied!");
+  }
+}
+
 
 
   // TEST SUPABASE CONNECTION
