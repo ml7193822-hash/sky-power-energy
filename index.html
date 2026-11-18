@@ -2320,13 +2320,7 @@ async function loadCompanyFundSubmissions() {
     container.appendChild(card);
   });
 }
-  function showApp() {
-  document.getElementById("authScreen").style.display = "none";
-  document.querySelector(".layout").style.display = "flex";
-
-  loadWallet();
-  loadDashboardStats();
-  }
+  
   /* SKY POWER ENERGY — WHITE & GOLD DASHBOARD DESIGN */
 
 (function applySkyPowerWhiteDashboard() {
@@ -2620,114 +2614,96 @@ async function loadDashboardStats() {
 }
 
 
-/* OPEN DASHBOARD AFTER LOGIN */
+
+/* LOAD DASHBOARD AFTER LOGIN */
 
 function showApp() {
   document.getElementById("authScreen").style.display = "none";
   document.querySelector(".layout").style.display = "flex";
 
   loadWallet();
-loadDashboardStats();
-
-setTimeout(() => {
+  loadDashboardStats();
   loadDashboardBonuses();
-}, 500);
+}
+
+/* LOAD WELCOME AND REFERRAL BONUSES */
+
 async function loadDashboardBonuses() {
   const dashboard = document.getElementById("Dashboard");
-  if (!dashboard) {
-    console.error("Dashboard element not found");
-    return;
-  }
+  if (!dashboard) return;
 
-  const statValues = dashboard.querySelectorAll(".grid .stat-value");
+  const statValues =
+    dashboard.querySelectorAll(".grid .stat-value");
 
   try {
     const { data: { user }, error: authError } =
       await supabaseClient.auth.getUser();
-    console.log("Logged-in user ID:", user?.id);
 
     if (authError || !user) {
       console.error("Authentication error:", authError);
       return;
     }
 
-    const [welcomeResult, referralResult] = await Promise.all([
-      supabaseClient
-        .from("bonuses")
-        .select("amount")
-        .eq("user_id", user.id)
-        .eq("bonus_type", "welcome")
-        .eq("status", "approved"),
+    const [welcomeResult, referralResult] =
+      await Promise.all([
+        supabaseClient
+          .from("bonuses")
+          .select("amount")
+          .eq("user_id", user.id)
+          .eq("bonus_type", "welcome")
+          .eq("status", "approved"),
 
-      supabaseClient
-        .from("referral_commissions")
-        .select("commission_amount")
-        .eq("beneficiary_id", user.id)
-        .eq("status", "approved")
-    ]);
-
-    console.log("Welcome result:", welcomeResult);
-    console.log("Referral result:", referralResult);
+        supabaseClient
+          .from("referral_commissions")
+          .select("commission_amount")
+          .eq("beneficiary_id", user.id)
+          .eq("status", "approved")
+      ]);
 
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
 
     if (welcomeResult.error) {
       console.error("Welcome bonus error:", welcomeResult.error);
-      if (statValues[2]) statValues[2].textContent = "Unavailable";
+      if (statValues[2]) {
+        statValues[2].textContent = "Unavailable";
+      }
     } else {
       const total = (welcomeResult.data || []).reduce(
-        (sum, item) => sum + Number(item.amount || 0), 0
+        (sum, item) => sum + Number(item.amount || 0),
+        0
       );
 
-      if (statValues[2]) statValues[2].textContent = money(total);
+      if (statValues[2]) {
+        statValues[2].textContent = money(total);
+      }
     }
 
     if (referralResult.error) {
       console.error("Referral bonus error:", referralResult.error);
-      if (statValues[3]) statValues[3].textContent = "Unavailable";
+      if (statValues[3]) {
+        statValues[3].textContent = "Unavailable";
+      }
     } else {
       const total = (referralResult.data || []).reduce(
-        (sum, item) => sum + Number(item.commission_amount || 0), 0
+        (sum, item) => sum + Number(item.commission_amount || 0),
+        0
       );
 
-      if (statValues[3]) statValues[3].textContent = money(total);
+      if (statValues[3]) {
+        statValues[3].textContent = money(total);
+      }
     }
 
   } catch (error) {
-    console.error("Dashboard bonus loading error:", error);
+    console.error("Bonus loading error:", error);
   }
 }
 
 
 
-async function testBonusConnection() {
-  const { data: { user }, error: authError } =
-    await supabaseClient.auth.getUser();
 
-  console.log("AUTH:", user?.id, authError);
 
-  if (!user) {
-    console.error("No logged-in user found");
-    return;
-  }
-
-  const welcome = await supabaseClient
-    .from("bonuses")
-    .select("*")
-    .eq("user_id", user.id);
-
-  console.log("WELCOME DATA:", welcome.data);
-  console.log("WELCOME ERROR:", welcome.error);
-
-  const referral = await supabaseClient
-    .from("referral_commissions")
-    .select("*")
-    .eq("beneficiary_id", user.id);
-
-  console.log("REFERRAL DATA:", referral.data);
-  console.log("REFERRAL ERROR:", referral.error);
-}
 
 
 
