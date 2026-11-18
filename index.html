@@ -1119,16 +1119,47 @@ async function loginUser() {
     return;
   }
 
+    const { data: accountStatus, error: statusError } =
+    await supabaseClient.rpc("get_my_account_status");
+
+  if (statusError) {
+    showAuthMessage("Could not verify account status. Please try again.");
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
+  if (accountStatus === "suspended") {
+    showAuthMessage("Your account has been suspended. Contact the administrator.");
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
   showApp();
   await checkAdminAccess();
   showAuthMessage("");
-}
+  }
 
 // CHECK EXISTING LOGIN
 async function checkLogin() {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (!error && data.session) {
+
+    const { data: accountStatus, error: statusError } =
+      await supabaseClient.rpc("get_my_account_status");
+
+    if (statusError || accountStatus === "suspended") {
+      await supabaseClient.auth.signOut();
+
+      if (accountStatus === "suspended") {
+        showAuthMessage(
+          "Your account has been suspended. Contact the administrator."
+        );
+      }
+
+      return;
+    }
+
     showApp();
     await checkAdminAccess();
   }
@@ -1432,7 +1463,26 @@ viewButton.onclick = () => {
   openMemberDetails(member.member_id);
 };
 
-card.append(email, balance, joined, viewButton);
+const status = document.createElement("p");
+status.textContent =
+  "Account: " + member.account_status.toUpperCase();
+
+const statusButton = document.createElement("button");
+statusButton.className = "gold-btn";
+
+statusButton.textContent =
+  member.account_status === "suspended"
+    ? "Activate Account"
+    : "Suspend Account";
+
+statusButton.onclick = () => {
+  changeMemberStatus(
+    member.member_id,
+    member.account_status === "suspended" ? "active" : "suspended"
+  );
+};
+
+card.append(email, balance, joined, status, viewButton, statusButton);
 list.appendChild(card);
   });
 }
@@ -1488,6 +1538,34 @@ async function openMemberDetails(memberId) {
           `UGX ${Number(item.amount).toLocaleString()} — ${item.status}`
         ).join(" | ")
       : "No withdrawals found.";
+}
+  // SUSPEND OR ACTIVATE MEMBER
+async function changeMemberStatus(memberId, newStatus) {
+
+  const action = newStatus === "suspended"
+    ? "suspend"
+    : "activate";
+
+  if (!confirm("Are you sure you want to " + action + " this account?")) {
+    return;
+  }
+
+  const { data, error } = await supabaseClient.rpc(
+    "set_member_account_status",
+    {
+      p_member_id: memberId,
+      p_status: newStatus
+    }
+  );
+
+  if (error) {
+    alert("Error: " + error.message);
+    return;
+  }
+
+  alert(data || "Account status updated.");
+
+  await loadAdminMembers();
 }
 
   // LOAD PENDING WITHDRAWALS
