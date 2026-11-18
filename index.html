@@ -1142,6 +1142,47 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
+  
+async function loadProfile() {
+  const { data: authData, error: authError } =
+    await supabaseClient.auth.getUser();
+
+  if (authError || !authData.user) {
+    document.getElementById("profileName").textContent = "Not logged in";
+    return;
+  }
+
+  const user = authData.user;
+
+  const { data: profile, error } = await supabaseClient
+    .from("profiles")
+    .select("full_name, phone, referral_code, created_at")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Profile loading error:", error);
+    document.getElementById("profileName").textContent =
+      "Could not load profile";
+    return;
+  }
+
+  document.getElementById("profileName").textContent =
+    profile.full_name || "Not provided";
+
+  document.getElementById("profileEmail").textContent =
+    user.email || "Not provided";
+
+  document.getElementById("profilePhone").textContent =
+    profile.phone || "Not provided";
+
+  document.getElementById("profileId").textContent =
+    user.id;
+
+  document.getElementById("profileStatus").textContent =
+    "Authenticated";
+}
+
   // TEST SUPABASE CONNECTION
 async function testSupabaseConnection() {
   const message = document.getElementById("authMessage");
@@ -2636,6 +2677,7 @@ function showApp() {
   loadWallet();
   loadDashboardStats();
   loadDashboardBonuses();
+  loadProfile();
 }
 
 /* LOAD WELCOME AND REFERRAL BONUSES */
