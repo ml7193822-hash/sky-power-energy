@@ -2699,7 +2699,37 @@ async function loadDashboardBonuses() {
   }
 }
 
-loadDashboardBonuses();
+
+
+async function testBonusConnection() {
+  const { data: { user }, error: authError } =
+    await supabaseClient.auth.getUser();
+
+  console.log("AUTH:", user?.id, authError);
+
+  if (!user) {
+    console.error("No logged-in user found");
+    return;
+  }
+
+  const welcome = await supabaseClient
+    .from("bonuses")
+    .select("*")
+    .eq("user_id", user.id);
+
+  console.log("WELCOME DATA:", welcome.data);
+  console.log("WELCOME ERROR:", welcome.error);
+
+  const referral = await supabaseClient
+    .from("referral_commissions")
+    .select("*")
+    .eq("beneficiary_id", user.id);
+
+  console.log("REFERRAL DATA:", referral.data);
+  console.log("REFERRAL ERROR:", referral.error);
+}
+
+testBonusConnection();
 
 
 
