@@ -1180,11 +1180,11 @@ async function loadProfile() {
     phone.textContent = profile?.phone || "Not provided";
 
   } catch (error) {
-    console.error("Profile error:", error);
-    name.textContent = "Could not load profile";
-    status.textContent = "Profile loading error";
+  console.error("Profile error:", error);
+  name.textContent = "Could not load profile";
+  phone.textContent = "Not loaded";
+  status.textContent = error.message || "Unknown error";
   }
-}
 
 
   // TEST SUPABASE CONNECTION
