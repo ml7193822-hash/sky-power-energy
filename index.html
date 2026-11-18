@@ -512,6 +512,11 @@ main {
     onclick="showPage('Settings',this)">
     ⚙ &nbsp; Settings
   </button>
+  <button class="nav" id="adminNav"
+  style="display:none;"
+  onclick="showPage('Admin Panel',this)">
+  🛡️ &nbsp; Admin Panel
+  </button>
 
 </aside>
 
@@ -820,6 +825,23 @@ main {
     Account settings will be available after secure setup.
   </div>
 </section>
+  <!-- ADMIN PANEL -->
+<section class="page" id="Admin Panel">
+
+  <div class="welcome">
+    <h1>Admin Panel 🛡️</h1>
+    <div class="muted">Manage Sky Power Energy deposits</div>
+  </div>
+
+  <div class="section">
+    <h2>Pending Deposits</h2>
+
+    <div id="adminDepositList">
+      <p class="muted">Loading deposit requests...</p>
+    </div>
+  </div>
+
+</section>
 
 </main>
   </div>
@@ -891,6 +913,32 @@ async function registerUser() {
     showAuthMessage("Account created. Check your email to confirm your account, then log in.");
   }
 }
+  // CHECK ADMINISTRATOR ACCESS
+async function checkAdminAccess() {
+  const adminButton = document.getElementById("adminNav");
+
+  adminButton.style.display = "none";
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !user) return;
+
+  const { data, error } = await supabaseClient
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Admin check error:", error);
+    return;
+  }
+
+  if (data) {
+    adminButton.style.display = "";
+  }
+}
 
 // MEMBER LOGIN
 async function loginUser() {
@@ -915,8 +963,8 @@ async function loginUser() {
   }
 
   showApp();
-  showAuthMessage("");
-}
+await checkAdminAccess();
+showAuthMessage("");
 
 // CHECK EXISTING LOGIN
 async function checkLogin() {
@@ -924,6 +972,7 @@ async function checkLogin() {
 
   if (!error && data.session) {
     showApp();
+await checkAdminAccess();
   }
 }
 
