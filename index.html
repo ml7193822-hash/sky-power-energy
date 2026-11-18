@@ -1122,6 +1122,67 @@ async function loadWallet() {
 
   messageElement.textContent = "Your account balance";
 }
+  // LOAD PENDING DEPOSITS FOR ADMIN
+async function loadAdminDeposits() {
+  const container = document.getElementById("adminDepositList");
+
+  container.textContent = "Loading deposit requests...";
+
+  const { data, error } = await supabaseClient
+    .from("deposits")
+    .select("id, amount, network, phone_number, transaction_reference, created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Admin deposits error:", error);
+    container.textContent = "Error: " + error.message;
+    return;
+  }
+
+  container.replaceChildren();
+
+  if (!data || data.length === 0) {
+    container.textContent = "There are no pending deposits.";
+    return;
+  }
+
+  data.forEach(deposit => {
+    const card = document.createElement("div");
+
+    card.style.cssText =
+      "background:#211a0c;border:1px solid #80601c;border-radius:10px;padding:15px;margin-bottom:12px;";
+
+    const details = [
+      "Amount: UGX " + Number(deposit.amount).toLocaleString("en-UG"),
+      "Network: " + deposit.network,
+      "Phone: " + deposit.phone_number,
+      "Reference: " + deposit.transaction_reference,
+      "Date: " + new Date(deposit.created_at).toLocaleString("en-UG")
+    ];
+
+    details.forEach(detail => {
+      const p = document.createElement("p");
+      p.textContent = detail;
+      card.appendChild(p);
+    });
+
+    const approve = document.createElement("button");
+    approve.textContent = "Approve Deposit";
+    approve.className = "gold-btn";
+    approve.onclick = () => approveDeposit(deposit.id);
+
+    const reject = document.createElement("button");
+    reject.textContent = "Reject Deposit";
+    reject.style.cssText =
+      "background:#8b2929;color:white;padding:12px;border:0;border-radius:8px;margin-left:8px;";
+    reject.onclick = () => rejectDeposit(deposit.id);
+
+    card.appendChild(approve);
+    card.appendChild(reject);
+    container.appendChild(card);
+  });
+}
   
 async function submitDeposit() {
   const amount = Number(document.getElementById("depositAmount").value);
@@ -1173,6 +1234,44 @@ async function submitDeposit() {
   document.getElementById("depositPhone").value = "";
   document.getElementById("depositReference").value = "";
 }
+  // APPROVE DEPOSIT
+async function approveDeposit(id) {
+  if (!confirm("Have you confirmed receipt of this payment?")) {
+    return;
+  }
+
+  const { error } = await supabaseClient.rpc("approve_deposit", {
+    p_deposit_id: id
+  });
+
+  if (error) {
+    alert("Approval failed: " + error.message);
+    return;
+  }
+
+  alert("Deposit approved successfully!");
+  loadAdminDeposits();
+  loadWallet();
+}
+
+// REJECT DEPOSIT
+async function rejectDeposit(id) {
+  if (!confirm("Are you sure you want to reject this deposit?")) {
+    return;
+  }
+
+  const { error } = await supabaseClient.rpc("reject_deposit", {
+    p_deposit_id: id
+  });
+
+  if (error) {
+    alert("Rejection failed: " + error.message);
+    return;
+  }
+
+  alert("Deposit rejected successfully!");
+  loadAdminDeposits();
+}
 
 
 
@@ -1209,6 +1308,9 @@ function showPage(name, button) {
   }
   if (name === "Deposit History") {
   loadDepositHistory();
+  }
+  if (name === "Admin Panel") {
+  loadAdminDeposits();
   }
 
   document.querySelectorAll(".nav")
