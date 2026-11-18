@@ -487,6 +487,10 @@ main {
     onclick="showPage('Deposit',this)">
     💰 &nbsp; Deposit
   </button>
+  <button class="nav"
+  onclick="showPage('Withdrawal',this)">
+  💸 &nbsp; Withdraw Money
+  </button>
 
   <button class="nav"
     onclick="showPage('Deposit History',this)">
@@ -773,6 +777,48 @@ main {
     </p>
   </div>
 </section>
+  
+<!-- WITHDRAWAL REQUEST PAGE -->
+<section class="page" id="Withdrawal">
+
+  <div class="welcome">
+    <h1>Withdraw Money</h1>
+    <div class="muted">Withdraw funds from your Sky Power Energy wallet</div>
+  </div>
+
+  <div class="section">
+    <h2>Withdrawal Details</h2>
+
+    <p class="muted">Minimum withdrawal: UGX 2,000</p>
+
+    <label>Amount (UGX)</label>
+    <input id="withdrawAmount" type="number"
+      min="2000" step="1" placeholder="Minimum 2,000"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+
+    <label>Mobile Money Network</label>
+    <select id="withdrawNetwork"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+      <option value="MTN">MTN Mobile Money</option>
+      <option value="Airtel">Airtel Money</option>
+    </select>
+
+    <label>Phone Number</label>
+    <input id="withdrawPhone" type="tel"
+      placeholder="Enter Mobile Money number"
+      style="width:100%;padding:14px;margin:10px 0;background:#211a0c;color:white;border:1px solid #80601c;border-radius:8px">
+
+    <button class="gold-btn"
+      style="width:100%;margin-top:15px"
+      onclick="submitWithdrawal()">
+      Submit Withdrawal
+    </button>
+
+    <p id="withdrawMessage" class="notice"></p>
+  </div>
+
+</section>
+
 
 
 <section class="page" id="Withdrawal History">
@@ -782,7 +828,11 @@ main {
   </div>
 
   <div class="section">
-    No withdrawal records in this demo.
+    <h2>My Withdrawal Requests</h2>
+
+    <div id="withdrawalHistoryList">
+      <p class="muted">Loading withdrawal history...</p>
+    </div>
   </div>
 </section>
 
@@ -823,9 +873,10 @@ main {
 
   <div class="welcome">
     <h1>Admin Panel 🛡️</h1>
-    <div class="muted">Manage Sky Power Energy deposits</div>
+    <div class="muted">Manage Sky Power Energy deposits and withdrawals</div>
   </div>
 
+  <!-- PENDING DEPOSITS -->
   <div class="section">
     <h2>Pending Deposits</h2>
 
@@ -834,10 +885,19 @@ main {
     </div>
   </div>
 
+  <!-- PENDING WITHDRAWALS -->
+  <div class="section">
+    <h2>Pending Withdrawals 💸</h2>
+
+    <div id="adminWithdrawalList">
+      <p class="muted">Loading withdrawal requests...</p>
+    </div>
+  </div>
+
 </section>
 
 </main>
-  </div>
+</div>
 
 
 <!-- JAVASCRIPT -->
@@ -1085,6 +1145,38 @@ async function loadDepositHistory() {
     container.appendChild(card);
   });
 }
+  // LOAD WITHDRAWAL HISTORY
+async function loadWithdrawalHistory() {
+  const list = document.getElementById("withdrawalHistoryList");
+
+  list.innerHTML = "<p>Loading withdrawal history...</p>";
+
+  const { data, error } = await supabaseClient
+    .from("withdrawals")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    list.innerHTML = "Could not load withdrawal history.";
+    console.error(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML = "<p>No withdrawal requests yet.</p>";
+    return;
+  }
+
+  list.innerHTML = data.map(item => `
+    <div class="history-card">
+      <h3>UGX ${Number(item.amount).toLocaleString()}</h3>
+      <p>${item.network} — ${item.phone_number}</p>
+      <p>Status: <strong>${item.status.toUpperCase()}</strong></p>
+      <small>${new Date(item.created_at).toLocaleString()}</small>
+    </div>
+  `).join("");
+}
+  
 
   
 async function loadWallet() {
@@ -1183,6 +1275,91 @@ async function loadAdminDeposits() {
     container.appendChild(card);
   });
 }
+  // LOAD PENDING WITHDRAWALS
+async function loadAdminWithdrawals() {
+  const list = document.getElementById("adminWithdrawalList");
+
+  list.innerHTML = "<p>Loading withdrawal requests...</p>";
+
+  const { data, error } = await supabaseClient
+    .from("withdrawals")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    list.textContent = "Could not load withdrawals: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML = "<p>No pending withdrawal requests.</p>";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "history-card";
+
+    const details = document.createElement("p");
+    details.textContent =
+      "UGX " + Number(item.amount).toLocaleString() +
+      " | " + item.network +
+      " | " + item.phone_number;
+
+    const date = document.createElement("small");
+    date.textContent = new Date(item.created_at).toLocaleString();
+
+    const approve = document.createElement("button");
+    approve.className = "gold-btn";
+    approve.textContent = "Approve";
+    approve.onclick = () => approveWithdrawal(item.id);
+
+    const reject = document.createElement("button");
+    reject.className = "gold-btn";
+    reject.textContent = "Reject";
+    reject.onclick = () => rejectWithdrawal(item.id);
+
+    card.append(details, date, document.createElement("br"), approve, reject);
+    list.appendChild(card);
+  });
+}
+  // APPROVE WITHDRAWAL
+async function approveWithdrawal(id) {
+  if (!confirm("Have you sent the Mobile Money payment?")) return;
+
+  const { data, error } = await supabaseClient.rpc(
+    "approve_withdrawal",
+    { p_withdrawal_id: id }
+  );
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Withdrawal approved!");
+  loadAdminWithdrawals();
+}
+  // REJECT WITHDRAWAL
+async function rejectWithdrawal(id) {
+  if (!confirm("Reject this withdrawal and refund the user's wallet?")) return;
+
+  const { data, error } = await supabaseClient.rpc(
+    "reject_withdrawal",
+    { p_withdrawal_id: id }
+  );
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Withdrawal rejected. Money refunded!");
+  loadAdminWithdrawals();
+}
   
 async function submitDeposit() {
   const amount = Number(document.getElementById("depositAmount").value);
@@ -1272,6 +1449,56 @@ async function rejectDeposit(id) {
   alert("Deposit rejected successfully!");
   loadAdminDeposits();
 }
+  
+// SUBMIT WITHDRAWAL REQUEST
+async function submitWithdrawal() {
+  const amount = Number(
+    document.getElementById("withdrawAmount").value
+  );
+
+  const network =
+    document.getElementById("withdrawNetwork").value;
+
+  const phone =
+    document.getElementById("withdrawPhone").value.trim();
+
+  const message =
+    document.getElementById("withdrawMessage");
+
+  if (!Number.isSafeInteger(amount) || amount < 2000) {
+    message.textContent = "Minimum withdrawal is UGX 2,000.";
+    return;
+  }
+
+  if (!phone) {
+    message.textContent = "Enter your phone number.";
+    return;
+  }
+
+  message.textContent = "Submitting withdrawal...";
+
+  const { data, error } = await supabaseClient.rpc(
+    "request_withdrawal",
+    {
+      p_amount: amount,
+      p_network: network,
+      p_phone: phone
+    }
+  );
+
+  if (error) {
+    message.textContent = "Withdrawal failed: " + error.message;
+    return;
+  }
+
+  message.textContent = data;
+
+  document.getElementById("withdrawAmount").value = "";
+  document.getElementById("withdrawPhone").value = "";
+
+  await loadWallet();
+}
+
 
 
 
@@ -1309,8 +1536,12 @@ function showPage(name, button) {
   if (name === "Deposit History") {
   loadDepositHistory();
   }
+  if (name === "Withdrawal History") {
+  loadWithdrawalHistory();
+  }
   if (name === "Admin Panel") {
   loadAdminDeposits();
+  loadAdminWithdrawals();
   }
 
   document.querySelectorAll(".nav")
