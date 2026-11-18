@@ -1176,27 +1176,11 @@ function showAuthMessage(message) {
   // SWITCH BETWEEN REGISTRATION AND LOGIN
 
 function switchAuthMode(mode) {
-  const isLogin = mode === "login";
+  document.getElementById("registerForm").style.display =
+    mode === "register" ? "block" : "none";
 
-  document.getElementById("authTitle").textContent =
-    isLogin ? "Welcome Back! Sign In" : "Create your account";
-
-  document.getElementById("fullNameGroup").style.display =
-    isLogin ? "none" : "block";
-
-  document.getElementById("referralGroup").style.display =
-    isLogin ? "none" : "block";
-
-  document.getElementById("registerButton").style.display =
-    isLogin ? "none" : "block";
-
-  document.getElementById("loginButton").style.display =
-    isLogin ? "block" : "none";
-
-  document.getElementById("authSwitch").innerHTML =
-    isLogin
-      ? 'Don’t have an account? <a href="#" onclick="switchAuthMode(\'register\');return false" style="color:#e5b83d">Create Account</a>'
-      : 'Already have an account? <a href="#" onclick="switchAuthMode(\'login\');return false" style="color:#e5b83d">Login</a>';
+  document.getElementById("loginForm").style.display =
+    mode === "login" ? "block" : "none";
 
   document.getElementById("authMessage").textContent = "";
 }
