@@ -2320,6 +2320,13 @@ async function loadCompanyFundSubmissions() {
     container.appendChild(card);
   });
 }
+  function showApp() {
+  document.getElementById("authScreen").style.display = "none";
+  document.querySelector(".layout").style.display = "flex";
+
+  loadWallet();
+  loadDashboardStats();
+  }
 
 
 
