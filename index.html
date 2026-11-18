@@ -1143,45 +1143,49 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_ANON_KEY
 );
   
+
 async function loadProfile() {
-  const { data: authData, error: authError } =
-    await supabaseClient.auth.getUser();
+  const name = document.getElementById("profileName");
+  const email = document.getElementById("profileEmail");
+  const phone = document.getElementById("profilePhone");
+  const accountId = document.getElementById("profileId");
+  const status = document.getElementById("profileStatus");
 
-  if (authError || !authData.user) {
-    document.getElementById("profileName").textContent = "Not logged in";
-    return;
+  try {
+    const { data: authData, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if (authError) throw authError;
+
+    const user = authData.user;
+
+    if (!user) {
+      name.textContent = "Not logged in";
+      return;
+    }
+
+    email.textContent = user.email || "Not provided";
+    accountId.textContent = user.id;
+    status.textContent = "Authenticated";
+
+    const { data: profile, error } = await supabaseClient
+      .from("profiles")
+      .select("full_name, phone, referral_code, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    name.textContent = profile?.full_name || "Not provided";
+    phone.textContent = profile?.phone || "Not provided";
+
+  } catch (error) {
+    console.error("Profile error:", error);
+    name.textContent = "Could not load profile";
+    status.textContent = "Profile loading error";
   }
-
-  const user = authData.user;
-
-  const { data: profile, error } = await supabaseClient
-    .from("profiles")
-    .select("full_name, phone, referral_code, created_at")
-    .eq("id", user.id)
-    .single();
-
-  if (error) {
-    console.error("Profile loading error:", error);
-    document.getElementById("profileName").textContent =
-      "Could not load profile";
-    return;
-  }
-
-  document.getElementById("profileName").textContent =
-    profile.full_name || "Not provided";
-
-  document.getElementById("profileEmail").textContent =
-    user.email || "Not provided";
-
-  document.getElementById("profilePhone").textContent =
-    profile.phone || "Not provided";
-
-  document.getElementById("profileId").textContent =
-    user.id;
-
-  document.getElementById("profileStatus").textContent =
-    "Authenticated";
 }
+
 
   // TEST SUPABASE CONNECTION
 async function testSupabaseConnection() {
