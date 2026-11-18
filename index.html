@@ -875,6 +875,30 @@ main {
     <h1>Admin Panel 🛡️</h1>
     <div class="muted">Manage Sky Power Energy deposits and withdrawals</div>
   </div>
+  <!-- ADMIN STATISTICS -->
+<div class="grid">
+
+  <div class="stat">
+    <div class="stat-label">Total Deposits</div>
+    <div class="stat-value" id="adminTotalDeposits">UGX 0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-label">Total Withdrawals</div>
+    <div class="stat-value" id="adminTotalWithdrawals">UGX 0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-label">Registered Members</div>
+    <div class="stat-value" id="adminTotalMembers">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-label">Total Wallet Balance</div>
+    <div class="stat-value" id="adminTotalWallets">UGX 0</div>
+  </div>
+
+</div>
 
   <!-- PENDING DEPOSITS -->
   <div class="section">
@@ -1275,6 +1299,29 @@ async function loadAdminDeposits() {
     container.appendChild(card);
   });
 }
+  // LOAD ADMIN DASHBOARD STATISTICS
+async function loadAdminStats() {
+  const { data, error } = await supabaseClient.rpc(
+    "get_admin_dashboard_stats"
+  );
+
+  if (error) {
+    console.error("Admin statistics error:", error.message);
+    return;
+  }
+
+  document.getElementById("adminTotalDeposits").textContent =
+    "UGX " + Number(data.total_deposits).toLocaleString();
+
+  document.getElementById("adminTotalWithdrawals").textContent =
+    "UGX " + Number(data.total_withdrawals).toLocaleString();
+
+  document.getElementById("adminTotalMembers").textContent =
+    Number(data.total_members).toLocaleString();
+
+  document.getElementById("adminTotalWallets").textContent =
+    "UGX " + Number(data.total_wallets).toLocaleString();
+}
   // LOAD PENDING WITHDRAWALS
 async function loadAdminWithdrawals() {
   const list = document.getElementById("adminWithdrawalList");
@@ -1542,6 +1589,7 @@ function showPage(name, button) {
   if (name === "Admin Panel") {
   loadAdminDeposits();
   loadAdminWithdrawals();
+  loadAdminStats();
   }
 
   document.querySelectorAll(".nav")
