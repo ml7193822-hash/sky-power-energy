@@ -2039,6 +2039,7 @@ function closeMenu() {
 }
   
 // LOAD COMPANY PROFIT FUND FIGURES
+
 async function loadAdminProfitFunds() {
   const money = value =>
     "UGX " + Number(value || 0).toLocaleString("en-UG");
@@ -2052,48 +2053,40 @@ async function loadAdminProfitFunds() {
   const earningsElement =
     document.getElementById("adminTotalEarningsPaid");
 
-  const { data: funds, error: fundError } =
-    await supabaseClient
-      .from("verified_profit_fund")
-      .select("amount, allocated_amount");
+  const { data, error } = await supabaseClient.rpc(
+    "get_admin_profit_fund_stats"
+  );
 
-  if (fundError) {
-    console.error("Company funds error:", fundError);
-    verifiedElement.textContent = "Unavailable";
+  if (error) {
+    console.error("Admin profit fund error:", error);
+    verifiedElement.textContent = "Error: " + error.message;
     allocatedElement.textContent = "Unavailable";
     availableElement.textContent = "Unavailable";
-  } else {
-    let verified = 0;
-    let allocated = 0;
-
-    (funds || []).forEach(fund => {
-      verified += Number(fund.amount) || 0;
-      allocated += Number(fund.allocated_amount) || 0;
-    });
-
-    verifiedElement.textContent = money(verified);
-    allocatedElement.textContent = money(allocated);
-    availableElement.textContent =
-      money(Math.max(0, verified - allocated));
-  }
-
-  const { data: earnings, error: earningsError } =
-    await supabaseClient
-      .from("earnings")
-      .select("amount")
-      .eq("status", "approved");
-
-  if (earningsError) {
-    console.error("Approved earnings error:", earningsError);
     earningsElement.textContent = "Unavailable";
-  } else {
-    const total = (earnings || []).reduce(
-      (sum, item) => sum + (Number(item.amount) || 0),
-      0
-    );
-
-    earningsElement.textContent = money(total);
+    return;
   }
+
+  const stats = data && data.length ? data[0] : null;
+
+  if (!stats) {
+    verifiedElement.textContent = money(0);
+    allocatedElement.textContent = money(0);
+    availableElement.textContent = money(0);
+    earningsElement.textContent = money(0);
+    return;
+  }
+
+  verifiedElement.textContent =
+    money(stats.verified_amount);
+
+  allocatedElement.textContent =
+    money(stats.allocated_amount);
+
+  availableElement.textContent =
+    money(stats.available_amount);
+
+  earningsElement.textContent =
+    money(stats.total_approved_earnings);
 }
 
 
