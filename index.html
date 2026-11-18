@@ -761,10 +761,11 @@ main {
 </section>
 
 
+
 <section class="page" id="Investment">
   <div class="welcome">
-    <h1>My Investments</h1>
-    <div class="muted">Track your investment activity</div>
+    <h1>My Investments 💰</h1>
+    <div class="muted">Track your investment activity and recorded earnings</div>
   </div>
 
   <div class="section">
@@ -789,7 +790,7 @@ main {
   </div>
 
   <div class="section">
-    <h2>Active Investments</h2>
+    <h2>Active Investments 📈</h2>
     <div id="activeInvestmentList">
       <p class="muted">Your active investments will appear here.</p>
     </div>
@@ -803,14 +804,23 @@ main {
   </div>
 
   <div class="section">
+    <h2>My Earnings History 💸</h2>
+    <div id="investmentEarningsHistory">
+      <p class="muted">Your recorded earnings will appear here.</p>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>Investment Terms</h2>
     <p class="muted">
       Investment activation, duration, fees, risks and any
       earnings are subject to verified business terms.
-      No profit is guaranteed.
+      No profit is guaranteed. Only approved earnings
+      actually credited to your wallet are displayed.
     </p>
   </div>
 </section>
+
 
   
 
@@ -1337,13 +1347,17 @@ async function loadDepositHistory() {
   });
 }
   
+
+
 async function loadMyInvestments() {
-  const { data: sessionData } =
-    await supabaseClient.auth.getSession();
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
 
-  const user = sessionData.session?.user;
+  if (userError || !user) return;
 
-  if (!user) return;
+  const history = document.getElementById("investmentHistory");
+  const activeList = document.getElementById("activeInvestmentList");
+  const earningsList = document.getElementById("investmentEarningsHistory");
 
   const { data, error } = await supabaseClient
     .from("investments")
@@ -1352,39 +1366,58 @@ async function loadMyInvestments() {
     .order("created_at", { ascending: false });
 
   if (error) {
-  document.getElementById("investmentHistory").textContent =
-    "Investment error: " + error.message;
-
-  console.error("Investment loading error:", error);
-  return;
+    history.textContent = "Investment error: " + error.message;
+    return;
   }
 
-  const history = document.getElementById("investmentHistory");
-  const activeList = document.getElementById("activeInvestmentList");
+  const { data: earnings, error: earningsError } =
+    await supabaseClient
+      .from("earnings")
+      .select("amount, earning_day, earning_date, status")
+      .eq("user_id", user.id)
+      .order("earning_date", { ascending: false });
 
-  history.innerHTML = "";
-  activeList.innerHTML = "";
+  if (earningsError) {
+    console.error("Earnings loading error:", earningsError);
+    earningsList.textContent =
+      "Could not load earnings: " + earningsError.message;
+    return;
+  }
+
+  history.replaceChildren();
+  activeList.replaceChildren();
+  earningsList.replaceChildren();
 
   let totalInvested = 0;
   let activeCount = 0;
+  let totalEarnings = 0;
 
-  data.forEach(investment => {
+  (earnings || []).forEach(item => {
+    if (item.status === "approved") {
+      totalEarnings += Number(item.amount) || 0;
+    }
+  });
+
+  (data || []).forEach(investment => {
     const amount = Number(investment.amount) || 0;
     totalInvested += amount;
 
-    if (investment.status === "active") {
-      activeCount++;
-    }
+    if (investment.status === "active") activeCount++;
 
     const item = document.createElement("div");
     item.className = "investment-card";
 
-    item.innerHTML = `
-      <h3>UGX ${amount.toLocaleString()}</h3>
-      <p>Status: ${investment.status}</p>
-      <p>Date: ${new Date(investment.created_at).toLocaleDateString()}</p>
-    `;
+    const heading = document.createElement("h3");
+    heading.textContent = "UGX " + amount.toLocaleString("en-UG");
 
+    const status = document.createElement("p");
+    status.textContent = "Status: " + investment.status;
+
+    const date = document.createElement("p");
+    date.textContent =
+      "Date: " + new Date(investment.created_at).toLocaleDateString("en-UG");
+
+    item.append(heading, status, date);
     history.appendChild(item);
 
     if (investment.status === "active") {
@@ -1393,21 +1426,48 @@ async function loadMyInvestments() {
   });
 
   document.getElementById("totalInvested").textContent =
-    "UGX " + totalInvested.toLocaleString();
+    "UGX " + totalInvested.toLocaleString("en-UG");
 
-  document.getElementById("activeInvestments").textContent =
-    activeCount;
+  document.getElementById("activeInvestments").textContent = activeCount;
 
   document.getElementById("totalEarnings").textContent =
-    "UGX 0";
-  
-  if (data.length === 0) {
+    "UGX " + totalEarnings.toLocaleString("en-UG");
+
+  if (!data || data.length === 0) {
     history.textContent = "No investments yet.";
     activeList.textContent = "No active investments.";
   } else if (activeCount === 0) {
     activeList.textContent = "No active investments.";
   }
+
+  if (!earnings || earnings.length === 0) {
+    earningsList.textContent = "No earnings have been recorded yet.";
+  } else {
+    earnings.forEach(earning => {
+      const card = document.createElement("div");
+      card.className = "investment-card";
+
+      const amount = document.createElement("h3");
+      amount.textContent =
+        "UGX " + Number(earning.amount).toLocaleString("en-UG");
+
+      const day = document.createElement("p");
+      day.textContent = "Earning day: " + earning.earning_day;
+
+      const date = document.createElement("p");
+      date.textContent =
+        "Date: " + new Date(earning.earning_date).toLocaleDateString("en-UG");
+
+      const status = document.createElement("p");
+      status.textContent = "Status: " + earning.status.toUpperCase();
+
+      card.append(amount, day, date, status);
+      earningsList.appendChild(card);
+    });
+  }
 }
+
+
 
   // LOAD WITHDRAWAL HISTORY
 async function loadWithdrawalHistory() {
