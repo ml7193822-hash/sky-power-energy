@@ -1007,63 +1007,62 @@ main {
     </div>
   </div>
 
-  <!-- COMPANY FUNDS -->
-  <div class="section">
-    <h2>🏦 Company Profit Funds</h2>
+  
+<!-- COMPANY PROFIT FUNDS -->
+<div class="section">
+  <h2>🏦 Company Profit Funds</h2>
 
-    <div style="
-      background:#211a0c;
-      border:1px solid #a77b16;
-      padding:18px;
-      border-radius:12px;
-    ">
-      <div class="muted">Declared company funds</div>
+  <div class="dashboard-grid">
+    <div class="stat-card">
+      <div class="muted">Declared Company Funds</div>
+      <h2 id="declaredCompanyFunds">UGX 300,000,000</h2>
+      <p class="muted">Pending verification</p>
+    </div>
 
-      <h2 style="color:#e5b83d">
-        UGX 300,000,000
-      </h2>
+    <div class="stat-card">
+      <div class="muted">Verified Funds</div>
+      <h2 id="verifiedCompanyFunds">Loading...</h2>
+    </div>
 
-      <p style="color:#e5b83d">
-        Status: Pending verification
-      </p>
+    <div class="stat-card">
+      <div class="muted">Allocated Funds</div>
+      <h2 id="allocatedCompanyFunds">Loading...</h2>
+    </div>
 
-      <p class="muted">
-        Funds must be independently verified before
-        they can be used for member earnings.
-      </p>
+    <div class="stat-card">
+      <div class="muted">Available Funds</div>
+      <h2 id="availableCompanyFunds">Loading...</h2>
     </div>
   </div>
 
-  <!-- EARNINGS MONITOR -->
-  <div class="section">
-    <h2>📈 Daily Earnings Monitor</h2>
+  <p class="muted">
+    Only independently verified company funds can be used
+    for member earnings. Declared funds are not yet available.
+  </p>
+</div>
 
+<!-- EARNINGS MONITOR -->
+<div class="section">
+  <h2>📈 Daily Earnings Monitor</h2>
+
+  <div class="stat-card">
+    <div class="muted">Total Approved Earnings</div>
+    <h2 id="adminTotalEarningsPaid">Loading...</h2>
+  </div>
+
+  <div class="stat-card">
+    <h3 style="color:#e5b83d">5:00 PM — Uganda Time</h3>
     <p class="muted">
-      Automatic earnings processing schedule:
+      Earnings are processed only when verified
+      company funds are available.
     </p>
-
-    <div style="
-      background:#211a0c;
-      padding:15px;
-      border-radius:10px;
-      border:1px solid #80601c;
-    ">
-      <h3 style="color:#e5b83d">
-        5:00 PM — Uganda Time
-      </h3>
-
-      <p class="muted">
-        Earnings are processed only when verified
-        company funds are available.
-      </p>
-
-      <p style="color:#e5b83d">
-        Automatic schedule: Configured
-      </p>
-    </div>
+    <p style="color:#e5b83d">
+      Automatic schedule: Configured
+    </p>
   </div>
-
+</div>
 </section>
+
 
 
 </main>
@@ -2038,6 +2037,65 @@ function closeMenu() {
   document.getElementById("sidebarBackdrop")
     .classList.remove("show");
 }
+  
+// LOAD COMPANY PROFIT FUND FIGURES
+async function loadAdminProfitFunds() {
+  const money = value =>
+    "UGX " + Number(value || 0).toLocaleString("en-UG");
+
+  const verifiedElement =
+    document.getElementById("verifiedCompanyFunds");
+  const allocatedElement =
+    document.getElementById("allocatedCompanyFunds");
+  const availableElement =
+    document.getElementById("availableCompanyFunds");
+  const earningsElement =
+    document.getElementById("adminTotalEarningsPaid");
+
+  const { data: funds, error: fundError } =
+    await supabaseClient
+      .from("verified_profit_fund")
+      .select("amount, allocated_amount");
+
+  if (fundError) {
+    console.error("Company funds error:", fundError);
+    verifiedElement.textContent = "Unavailable";
+    allocatedElement.textContent = "Unavailable";
+    availableElement.textContent = "Unavailable";
+  } else {
+    let verified = 0;
+    let allocated = 0;
+
+    (funds || []).forEach(fund => {
+      verified += Number(fund.amount) || 0;
+      allocated += Number(fund.allocated_amount) || 0;
+    });
+
+    verifiedElement.textContent = money(verified);
+    allocatedElement.textContent = money(allocated);
+    availableElement.textContent =
+      money(Math.max(0, verified - allocated));
+  }
+
+  const { data: earnings, error: earningsError } =
+    await supabaseClient
+      .from("earnings")
+      .select("amount")
+      .eq("status", "approved");
+
+  if (earningsError) {
+    console.error("Approved earnings error:", earningsError);
+    earningsElement.textContent = "Unavailable";
+  } else {
+    const total = (earnings || []).reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0
+    );
+
+    earningsElement.textContent = money(total);
+  }
+}
+
 
 function showPage(name, button) {
 
@@ -2063,7 +2121,7 @@ function showPage(name, button) {
   loadAdminWithdrawals();
   loadAdminStats();
   loadAdminMembers();
-    loadMyInvestments()
+  loadAdminProfitFunds();
   }
 
   document.querySelectorAll(".nav")
