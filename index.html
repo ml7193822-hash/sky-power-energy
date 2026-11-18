@@ -1267,8 +1267,8 @@ async function checkAdminAccess() {
 
 // MEMBER LOGIN
 async function loginUser() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
 
   if (!email || !password) {
     showAuthMessage("Enter your email and password.");
@@ -1287,7 +1287,7 @@ async function loginUser() {
     return;
   }
 
-    const { data: accountStatus, error: statusError } =
+  const { data: accountStatus, error: statusError } =
     await supabaseClient.rpc("get_my_account_status");
 
   if (statusError) {
