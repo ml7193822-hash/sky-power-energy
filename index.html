@@ -517,6 +517,9 @@ main {
   onclick="showPage('Admin Panel',this)">
   🛡️ &nbsp; Admin Panel
   </button>
+  <button class="nav" onclick="logoutUser()">
+  🚪 &nbsp; Logout
+  </button>
 
 </aside>
 
@@ -939,6 +942,16 @@ async function checkAdminAccess() {
     adminButton.style.display = "";
   }
 }
+  async function logoutUser() {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert("Logout failed: " + error.message);
+    return;
+  }
+
+  window.location.reload();
+  }
 
 // MEMBER LOGIN
 async function loginUser() {
