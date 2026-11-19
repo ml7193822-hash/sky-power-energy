@@ -2879,6 +2879,7 @@ function showApp() {
 
 /* LOAD WELCOME AND REFERRAL BONUSES */
 
+
 async function loadDashboardBonuses() {
   const dashboard = document.getElementById("Dashboard");
   if (!dashboard) return;
@@ -2898,11 +2899,10 @@ async function loadDashboardBonuses() {
     const [welcomeResult, referralResult] =
       await Promise.all([
         supabaseClient
-          .from("bonuses")
-          .select("amount")
+          .from("wallets")
+          .select("welcome_bonus")
           .eq("user_id", user.id)
-          .eq("bonus_type", "welcome")
-          .eq("status", "approved"),
+          .maybeSingle(),
 
         supabaseClient
           .from("referral_commissions")
@@ -2914,22 +2914,21 @@ async function loadDashboardBonuses() {
     const money = value =>
       "UGX " + Number(value || 0).toLocaleString("en-UG");
 
+    // Display actual welcome bonus
     if (welcomeResult.error) {
       console.error("Welcome bonus error:", welcomeResult.error);
       if (statValues[2]) {
         statValues[2].textContent = "Unavailable";
       }
     } else {
-      const total = (welcomeResult.data || []).reduce(
-        (sum, item) => sum + Number(item.amount || 0),
-        0
-      );
+      const total = welcomeResult.data?.welcome_bonus || 0;
 
       if (statValues[2]) {
         statValues[2].textContent = money(total);
       }
     }
 
+    // Display approved referral commissions
     if (referralResult.error) {
       console.error("Referral bonus error:", referralResult.error);
       if (statValues[3]) {
@@ -2937,7 +2936,8 @@ async function loadDashboardBonuses() {
       }
     } else {
       const total = (referralResult.data || []).reduce(
-        (sum, item) => sum + Number(item.commission_amount || 0),
+        (sum, item) =>
+          sum + Number(item.commission_amount || 0),
         0
       );
 
@@ -2950,6 +2950,7 @@ async function loadDashboardBonuses() {
     console.error("Bonus loading error:", error);
   }
 }
+
 
 
 
