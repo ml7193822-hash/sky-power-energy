@@ -2453,6 +2453,29 @@ async function submitCompanyProfitFund() {
   proofInput.value = "";
 }
   
+
+async function approveCompanyProfitFund(submissionId) {
+  if (!confirm("Are you sure you want to approve this company fund?")) {
+    return;
+  }
+
+  const { data, error } = await supabaseClient.rpc(
+    "approve_company_profit_fund",
+    {
+      p_submission_id: submissionId,
+      p_review_note: "Verified against company financial records."
+    }
+  );
+
+  if (error) {
+    alert("Approval failed: " + error.message);
+    return;
+  }
+
+  alert("Company fund approved successfully!");
+  await loadCompanyFundSubmissions();
+}
+
 async function loadCompanyFundSubmissions() {
   const container = document.getElementById("companyFundSubmissions");
 
@@ -2481,8 +2504,7 @@ async function loadCompanyFundSubmissions() {
     card.className = "investment-card";
 
     const amount = document.createElement("h3");
-    amount.textContent =
-      "UGX " + Number(fund.amount).toLocaleString("en-UG");
+    amount.textContent = "UGX " + Number(fund.amount).toLocaleString("en-UG");
 
     const source = document.createElement("p");
     source.textContent = "Source: " + fund.profit_source;
@@ -2498,9 +2520,18 @@ async function loadCompanyFundSubmissions() {
       "Submitted: " + new Date(fund.submitted_at).toLocaleString("en-UG");
 
     card.append(amount, source, proof, status, date);
+
+    if (fund.status === "pending") {
+      const approveButton = document.createElement("button");
+      approveButton.textContent = "Approve Fund";
+      approveButton.onclick = () => approveCompanyProfitFund(fund.id);
+      card.appendChild(approveButton);
+    }
+
     container.appendChild(card);
   });
 }
+
   
   /* SKY POWER ENERGY — WHITE & GOLD DASHBOARD DESIGN */
 
