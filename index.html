@@ -1381,12 +1381,21 @@ function switchAuthMode(mode) {
   document.getElementById("authMessage").textContent = "";
 }
 
+
 // MEMBER REGISTRATION
 async function registerUser() {
   const fullName = document.getElementById("fullName").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const referralCode = document.getElementById("referralCode").value.trim();
+
+  // Automatically capture referral code from URL
+  const urlReferralCode =
+    new URLSearchParams(window.location.search).get("ref");
+
+  const referralInput = document.getElementById("referralCode");
+
+  const referralCode =
+    (referralInput?.value.trim() || urlReferralCode || "").trim();
 
   if (!fullName || !email || !password) {
     showAuthMessage("Please enter your name, email and password.");
@@ -1420,9 +1429,12 @@ async function registerUser() {
     showApp();
     showAuthMessage("");
   } else {
-    showAuthMessage("Account created. Check your email to confirm your account, then log in.");
+    showAuthMessage(
+      "Account created. Check your email to confirm your account, then log in."
+    );
   }
 }
+
   // CHECK ADMINISTRATOR ACCESS
 async function checkAdminAccess() {
   const adminButton = document.getElementById("adminNav");
