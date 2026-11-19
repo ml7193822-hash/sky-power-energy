@@ -1209,6 +1209,8 @@ async function loadProfile() {
    } 
   
 
+
+
 async function loadReferralTeam() {
   const countElement = document.getElementById("referralCount");
   const codeElement = document.getElementById("myReferralCode");
@@ -1234,30 +1236,25 @@ async function loadReferralTeam() {
     const user = authData.user;
     if (!user) throw new Error("Please log in first.");
 
-    // Load user's referral code
+    // Get referral code
     const { data: profile, error: profileError } =
       await supabaseClient
         .from("profiles")
         .select("referral_code")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
     if (profileError) throw profileError;
 
-    const code = profile.referral_code;
+    const code = profile?.referral_code;
 
     codeElement.textContent = code || "Not assigned";
 
-    if (code) {
-      const referralLink =
-        `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(code)}`;
+    linkElement.textContent = code
+      ? `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(code)}`
+      : "Referral code not assigned";
 
-      linkElement.textContent = referralLink;
-    } else {
-      linkElement.textContent = "Referral code not assigned";
-    }
-
-    // Load direct referrals
+    // Get direct referrals
     const { data: referrals, error: referralError } =
       await supabaseClient
         .from("referrals")
@@ -1267,44 +1264,29 @@ async function loadReferralTeam() {
 
     if (referralError) throw referralError;
 
-    countElement.textContent = referrals.length;
+    const members = referrals || [];
 
+    countElement.textContent = members.length;
     membersElement.replaceChildren();
 
-    if (!referrals.length) {
+    if (members.length === 0) {
       membersElement.textContent = "No referrals yet.";
       return;
     }
 
-    const memberIds = [
-      ...new Set(referrals.map(r => r.referred_user_id))
-    ];
-
-    const { data: profiles, error: membersError } =
-      await supabaseClient
-        .from("profiles")
-        .select("id, full_name")
-        .in("id", memberIds);
-
-    if (membersError) throw membersError;
-
-    const profileMap = new Map(
-      profiles.map(p => [p.id, p])
-    );
-
-    referrals.forEach(referral => {
-      const member = profileMap.get(referral.referred_user_id);
-
+    members.forEach(referral => {
       const section = document.createElement("div");
       section.className = "section";
 
       const name = document.createElement("strong");
-      name.textContent = member?.full_name || "Member";
+      name.textContent = "Member";
 
       const joined = document.createElement("p");
       joined.textContent =
         "Joined: " +
-        new Date(referral.created_at).toLocaleDateString();
+        (referral.created_at
+          ? new Date(referral.created_at).toLocaleDateString()
+          : "Unknown");
 
       section.append(name, joined);
       membersElement.appendChild(section);
