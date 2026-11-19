@@ -1208,11 +1208,22 @@ async function loadProfile() {
   }
    } 
   
+
 async function loadReferralTeam() {
   const countElement = document.getElementById("referralCount");
   const codeElement = document.getElementById("myReferralCode");
   const linkElement = document.getElementById("myReferralLink");
   const membersElement = document.getElementById("referralMembers");
+
+  if (!countElement || !codeElement || !linkElement || !membersElement) {
+    console.error("Referral Team HTML elements are missing.");
+    return;
+  }
+
+  countElement.textContent = "0";
+  codeElement.textContent = "Loading...";
+  linkElement.textContent = "Loading...";
+  membersElement.textContent = "Loading referrals...";
 
   try {
     const { data: authData, error: authError } =
@@ -1223,6 +1234,7 @@ async function loadReferralTeam() {
     const user = authData.user;
     if (!user) throw new Error("Please log in first.");
 
+    // Load user's referral code
     const { data: profile, error: profileError } =
       await supabaseClient
         .from("profiles")
@@ -1232,30 +1244,41 @@ async function loadReferralTeam() {
 
     if (profileError) throw profileError;
 
-    const code = profile.referral_code || "Not assigned";
-    codeElement.textContent = code;
+    const code = profile.referral_code;
 
-    const referralLink =
-      `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(code)}`;
+    codeElement.textContent = code || "Not assigned";
 
-    linkElement.textContent = referralLink;
+    if (code) {
+      const referralLink =
+        `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(code)}`;
 
-    const { data: referrals, error } = await supabaseClient
-      .from("referrals")
-      .select("id, referred_user_id, created_at")
-      .eq("referrer_id", user.id)
-      .order("created_at", { ascending: false });
+      linkElement.textContent = referralLink;
+    } else {
+      linkElement.textContent = "Referral code not assigned";
+    }
 
-    if (error) throw error;
+    // Load direct referrals
+    const { data: referrals, error: referralError } =
+      await supabaseClient
+        .from("referrals")
+        .select("id, referred_user_id, created_at")
+        .eq("referrer_id", user.id)
+        .order("created_at", { ascending: false });
+
+    if (referralError) throw referralError;
 
     countElement.textContent = referrals.length;
+
+    membersElement.replaceChildren();
 
     if (!referrals.length) {
       membersElement.textContent = "No referrals yet.";
       return;
     }
 
-    const memberIds = referrals.map(r => r.referred_user_id);
+    const memberIds = [
+      ...new Set(referrals.map(r => r.referred_user_id))
+    ];
 
     const { data: profiles, error: membersError } =
       await supabaseClient
@@ -1265,24 +1288,37 @@ async function loadReferralTeam() {
 
     if (membersError) throw membersError;
 
-    membersElement.innerHTML = referrals.map(referral => {
-      const member = profiles.find(
-        p => p.id === referral.referred_user_id
-      );
+    const profileMap = new Map(
+      profiles.map(p => [p.id, p])
+    );
 
-      return `
-        <div class="section">
-          <strong>${escapeHTML(member?.full_name || "Member")}</strong>
-          <p>Joined: ${new Date(referral.created_at).toLocaleDateString()}</p>
-        </div>
-      `;
-    }).join("");
+    referrals.forEach(referral => {
+      const member = profileMap.get(referral.referred_user_id);
+
+      const section = document.createElement("div");
+      section.className = "section";
+
+      const name = document.createElement("strong");
+      name.textContent = member?.full_name || "Member";
+
+      const joined = document.createElement("p");
+      joined.textContent =
+        "Joined: " +
+        new Date(referral.created_at).toLocaleDateString();
+
+      section.append(name, joined);
+      membersElement.appendChild(section);
+    });
 
   } catch (error) {
     console.error("Referral loading error:", error);
+
+    codeElement.textContent = "Unable to load";
+    linkElement.textContent = "Unable to load";
     membersElement.textContent = error.message;
   }
 }
+
 
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, char => ({
