@@ -390,6 +390,7 @@ main {
 
 <body>
   
+
 <!-- LOGIN AND REGISTRATION -->
 <div id="authScreen" style="
   min-height:100vh;
@@ -408,6 +409,7 @@ main {
     padding:25px;
     color:#f4e6bd;
   ">
+
     <h2 style="color:#e5b83d;text-align:center">
       SKY POWER ENERGY
     </h2>
@@ -416,37 +418,67 @@ main {
       Welcome! Create your account or sign in.
     </p>
 
-    <input id="fullName" placeholder="Full name"
-      style="width:100%;padding:13px;margin:8px 0">
+    <!-- REGISTRATION FORM -->
+    <div id="registerForm">
 
-    <input id="email" type="email" placeholder="Email address"
-      style="width:100%;padding:13px;margin:8px 0">
+      <input id="fullName" placeholder="Full name"
+        style="width:100%;padding:13px;margin:8px 0">
 
-    <input id="password" type="password" placeholder="Password"
-      style="width:100%;padding:13px;margin:8px 0">
+      <input id="email" type="email" placeholder="Email address"
+        style="width:100%;padding:13px;margin:8px 0">
 
-    <input id="referralCode" placeholder="Referral code (optional)"
-      style="width:100%;padding:13px;margin:8px 0">
+      <input id="password" type="password" placeholder="Password"
+        style="width:100%;padding:13px;margin:8px 0">
 
-    <button onclick="registerUser()" style="
-      width:100%;padding:13px;margin-top:12px;
-      background:#e5b83d;border:0;border-radius:8px;
-      font-weight:bold;color:#241a08">
-      Create Account
-    </button>
+      <input id="referralCode" placeholder="Referral code (optional)"
+        style="width:100%;padding:13px;margin:8px 0">
 
-    <button onclick="loginUser()" style="
-      width:100%;padding:13px;margin-top:10px;
-      background:#241b0a;border:1px solid #a77b16;
-      border-radius:8px;color:#e5b83d">
-      Login
-    </button>
+      <button type="button" onclick="registerUser()" style="
+        width:100%;padding:13px;margin-top:12px;
+        background:#e5b83d;border:0;border-radius:8px;
+        font-weight:bold;color:#241a08">
+        Create Account
+      </button>
+
+      <p style="text-align:center">
+        Already have an account?
+        <a href="#" onclick="showLoginForm();return false"
+          style="color:#e5b83d">Login</a>
+      </p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm" style="display:none">
+
+      <input id="loginEmail" type="email"
+        placeholder="Email address"
+        style="width:100%;padding:13px;margin:8px 0">
+
+      <input id="loginPassword" type="password"
+        placeholder="Password"
+        style="width:100%;padding:13px;margin:8px 0">
+
+      <button type="button" onclick="loginUser()" style="
+        width:100%;padding:13px;margin-top:12px;
+        background:#e5b83d;border:0;border-radius:8px;
+        font-weight:bold;color:#241a08">
+        Sign In
+      </button>
+
+      <p style="text-align:center">
+        Don't have an account?
+        <a href="#" onclick="showRegisterForm();return false"
+          style="color:#e5b83d">Create Account</a>
+      </p>
+    </div>
 
     <p id="authMessage"
       style="text-align:center;color:#e5b83d;font-size:13px">
     </p>
+
   </div>
 </div>
+
 
 
 <!-- HEADER -->
