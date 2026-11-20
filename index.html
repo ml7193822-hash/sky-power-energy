@@ -1428,7 +1428,7 @@ async function testSupabaseConnection() {
       return;
     }
 
-    message.textContent = "Supabase connection successful!";
+    message.textContent = "";
     console.log("Supabase connected:", data);
   } catch (error) {
     message.textContent = "Connection failed: " + error.message;
