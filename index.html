@@ -952,16 +952,63 @@ main {
   </div>
 </section>
 
+
 <section class="page" id="Settings">
   <div class="welcome">
     <h1>Settings</h1>
-    <div class="muted">Dashboard preferences</div>
+    <div class="muted">Manage your account and security</div>
   </div>
 
+  <!-- PERSONAL INFORMATION -->
   <div class="section">
-    Account settings will be available after secure setup.
+    <h3>Personal Information</h3>
+
+    <label>Full Name</label>
+    <input id="settingsFullName" type="text"
+      placeholder="Enter your full name">
+
+    <label>Phone Number</label>
+    <input id="settingsPhone" type="tel"
+      placeholder="Enter your phone number">
+
+    <button class="gold-btn" type="button"
+      onclick="updateAccountDetails()">
+      Save Changes
+    </button>
+
+    <p id="settingsProfileMessage"></p>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="section">
+    <h3>Change Password</h3>
+
+    <label>New Password</label>
+    <input id="settingsNewPassword" type="password"
+      placeholder="Enter new password">
+
+    <label>Confirm New Password</label>
+    <input id="settingsConfirmPassword" type="password"
+      placeholder="Confirm new password">
+
+    <button class="gold-btn" type="button"
+      onclick="changeAccountPassword()">
+      Update Password
+    </button>
+
+    <p id="settingsPasswordMessage"></p>
+  </div>
+
+  <!-- ACCOUNT SECURITY -->
+  <div class="section">
+    <h3>Account Security</h3>
+    <p>Account Status:
+      <strong id="settingsAccountStatus">Checking...</strong>
+    </p>
+    <p id="settingsEmail"></p>
   </div>
 </section>
+
   
 <!-- CONTACT & SUPPORT -->
 <section class="page" id="Contact & Support">
@@ -2482,6 +2529,9 @@ function showPage(name, button) {
   loadAdminProfitFunds();
   loadCompanyFundSubmissions()
   }
+  if (name === "Settings") {
+  loadAccountSettings();
+  }
 
   document.querySelectorAll(".nav")
     .forEach(nav => nav.classList.remove("active"));
@@ -3038,6 +3088,109 @@ async function loadDashboardBonuses() {
     console.error("Bonus loading error:", error);
   }
 }
+  async function loadAccountSettings() {
+  const message = document.getElementById("settingsProfileMessage");
+  const { data: userData, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    message.textContent = "Please log in first.";
+    return;
+  }
+
+  const user = userData.user;
+
+  document.getElementById("settingsEmail").textContent =
+    "Email: " + (user.email || "");
+
+  const { data: profile, error } = await supabaseClient
+    .from("profiles")
+    .select("full_name, phone")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  document.getElementById("settingsFullName").value =
+    profile?.full_name || "";
+
+  document.getElementById("settingsPhone").value =
+    profile?.phone || "";
+
+  const { data: status, error: statusError } =
+    await supabaseClient.rpc("get_my_account_status");
+
+  document.getElementById("settingsAccountStatus").textContent =
+    statusError ? "Unable to check" : String(status);
+}
+
+async function updateAccountDetails() {
+  const message = document.getElementById("settingsProfileMessage");
+  message.textContent = "Saving...";
+
+  const { data: userData, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    message.textContent = "Please log in first.";
+    return;
+  }
+
+  const fullName = document.getElementById("settingsFullName").value.trim();
+  const phone = document.getElementById("settingsPhone").value.trim();
+
+  if (!fullName) {
+    message.textContent = "Please enter your full name.";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({ full_name: fullName, phone: phone })
+    .eq("id", userData.user.id);
+
+  if (error) {
+    message.textContent = "Could not save: " + error.message;
+    return;
+  }
+
+  message.textContent = "Account details updated successfully.";
+}
+
+async function changeAccountPassword() {
+  const message = document.getElementById("settingsPasswordMessage");
+  const password = document.getElementById("settingsNewPassword").value;
+  const confirmPassword =
+    document.getElementById("settingsConfirmPassword").value;
+
+  if (password.length < 6) {
+    message.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    message.textContent = "Passwords do not match.";
+    return;
+  }
+
+  message.textContent = "Updating password...";
+
+  const { error } = await supabaseClient.auth.updateUser({
+    password: password
+  });
+
+  if (error) {
+    message.textContent = "Could not update password: " + error.message;
+    return;
+  }
+
+  document.getElementById("settingsNewPassword").value = "";
+  document.getElementById("settingsConfirmPassword").value = "";
+  message.textContent = "Password updated successfully.";
+  }
 
 
 
