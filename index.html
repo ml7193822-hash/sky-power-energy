@@ -1147,6 +1147,15 @@ main {
       <p class="muted">Loading withdrawal requests...</p>
     </div>
   </div>
+  
+<!-- REFERRAL COMMISSIONS -->
+<div class="admin-section">
+  <h2>Pending Referral Commissions</h2>
+  <div id="adminReferralCommissionList">
+    Loading referral commissions...
+  </div>
+</div>
+
 
   <!-- MEMBERS -->
   <div class="section">
@@ -2299,6 +2308,85 @@ async function rejectWithdrawal(id) {
   loadAdminWithdrawals();
 }
   
+// LOAD PENDING REFERRAL COMMISSIONS
+async function loadAdminReferralCommissions() {
+  const list = document.getElementById(
+    "adminReferralCommissionList"
+  );
+
+  list.textContent = "Loading referral commissions...";
+
+  const { data, error } = await supabaseClient
+    .from("referral_commissions")
+    .select("id, beneficiary_id, commission_amount, status, created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    list.textContent =
+      "Could not load referral commissions: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.textContent = "No pending referral commissions.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "history-card";
+
+    const amount = document.createElement("p");
+    amount.textContent =
+      "Commission: UGX " +
+      Number(item.commission_amount).toLocaleString();
+
+    const beneficiary = document.createElement("p");
+    beneficiary.textContent =
+      "Beneficiary ID: " + item.beneficiary_id;
+
+    const date = document.createElement("small");
+    date.textContent =
+      "Date: " + new Date(item.created_at).toLocaleString();
+
+    const approve = document.createElement("button");
+    approve.className = "gold-btn";
+    approve.textContent = "Approve Commission";
+    approve.onclick = () =>
+      approveReferralCommission(item.id);
+
+    card.append(amount, beneficiary, date, approve);
+    list.appendChild(card);
+  });
+}
+
+// APPROVE REFERRAL COMMISSION
+async function approveReferralCommission(commissionId) {
+  if (!confirm("Approve and credit this referral commission?")) {
+    return;
+  }
+
+  const { data, error } = await supabaseClient.rpc(
+    "approve_referral_commission",
+    {
+      p_commission_id: commissionId
+    }
+  );
+
+  if (error) {
+    alert("Approval failed: " + error.message);
+    return;
+  }
+
+  alert(data || "Referral commission approved successfully.");
+
+  await loadAdminReferralCommissions();
+}
+
+  
 async function submitDeposit() {
   const amount = Number(document.getElementById("depositAmount").value);
   const network = document.getElementById("depositNetwork").value;
@@ -2539,6 +2627,7 @@ function showPage(name, button) {
   loadAdminMembers();
   loadAdminProfitFunds();
   loadCompanyFundSubmissions()
+  loadAdminReferralCommissions();
   }
   if (name === "Settings") {
   loadAccountSettings();
