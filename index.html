@@ -1415,6 +1415,7 @@ function showAuthMessage(message) {
 }
   // SWITCH BETWEEN REGISTRATION AND LOGIN
 
+
 function switchAuthMode(mode) {
   document.getElementById("registerForm").style.display =
     mode === "register" ? "block" : "none";
@@ -1424,6 +1425,15 @@ function switchAuthMode(mode) {
 
   document.getElementById("authMessage").textContent = "";
 }
+
+function showLoginForm() {
+  switchAuthMode("login");
+}
+
+function showRegisterForm() {
+  switchAuthMode("register");
+}
+
 
 
 // MEMBER REGISTRATION
