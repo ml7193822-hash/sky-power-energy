@@ -2488,6 +2488,7 @@ async function rejectDeposit(id) {
 }
   
 // SUBMIT WITHDRAWAL REQUEST
+
 async function submitWithdrawal() {
   const amount = Number(
     document.getElementById("withdrawAmount").value
@@ -2501,6 +2502,9 @@ async function submitWithdrawal() {
 
   const message =
     document.getElementById("withdrawMessage");
+
+  // Clear any previous message when retrying
+  message.textContent = "";
 
   if (!Number.isSafeInteger(amount) || amount < 2000) {
     message.textContent = "Minimum withdrawal is UGX 2,000.";
@@ -2528,7 +2532,7 @@ async function submitWithdrawal() {
     return;
   }
 
-  message.textContent = data;
+  message.textContent = data || "Withdrawal request submitted successfully.";
 
   document.getElementById("withdrawAmount").value = "";
   document.getElementById("withdrawPhone").value = "";
